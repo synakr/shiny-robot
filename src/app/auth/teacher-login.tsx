@@ -1,4 +1,6 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { useState } from "react";
+
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -8,7 +10,18 @@ import { router } from "expo-router";
 
 import AuthInput from "@/components/AuthInput";
 
+import { teacherLogin } from "@/services/auth";
+
+import { supabase } from "@/lib/supabase";
+import { useAuthStore } from "@/store/authStore";
+
 export default function TeacherLoginScreen() {
+  const [email, setEmail] = useState("");
+
+  const [password, setPassword] = useState("");
+
+  const { setUser, setRole } = useAuthStore();
+
   return (
     <SafeAreaView
       style={{
@@ -65,9 +78,20 @@ export default function TeacherLoginScreen() {
           style={{
             marginTop: 42,
           }}>
-          <AuthInput placeholder="Email or Mobile Number" icon={Mail} />
+          <AuthInput
+            placeholder="Email"
+            icon={Mail}
+            value={email}
+            onChangeText={setEmail}
+          />
 
-          <AuthInput placeholder="Password" icon={Lock} secure />
+          <AuthInput
+            placeholder="Password"
+            icon={Lock}
+            secure
+            value={password}
+            onChangeText={setPassword}
+          />
 
           {/* FORGOT */}
           <TouchableOpacity
@@ -88,6 +112,42 @@ export default function TeacherLoginScreen() {
         {/* LOGIN BUTTON */}
         <TouchableOpacity
           activeOpacity={0.85}
+          onPress={async () => {
+            const response = await teacherLogin(email, password);
+
+            if (!response.success) {
+              Alert.alert("Login Failed", response.error);
+
+              return;
+            }
+
+            const authUser = response.data?.user;
+
+            if (!authUser) {
+              Alert.alert("Login Failed", "User not found.");
+
+              return;
+            }
+
+            console.log("AUTH USER:");
+            console.log(authUser);
+
+            // Fetch matching teacher row
+            const teacherResponse = await supabase
+              .from("teachers")
+              .select("*")
+              .eq("auth_id", authUser.id)
+              .single();
+
+            console.log("MATCHED TEACHER:");
+            console.log(teacherResponse);
+
+            setUser(authUser);
+
+            setRole("teacher");
+
+            router.replace("/teacher/dashboard");
+          }}
           style={{
             height: 58,
             borderRadius: 18,

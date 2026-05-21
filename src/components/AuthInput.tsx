@@ -6,9 +6,17 @@ type Props = {
   placeholder: string;
   icon: LucideIcon;
   secure?: boolean;
+  value?: string;
+  onChangeText?: (text: string) => void;
 };
 
-export default function AuthInput({ placeholder, icon: Icon, secure }: Props) {
+export default function AuthInput({
+  placeholder,
+  icon: Icon,
+  secure,
+  value,
+  onChangeText,
+}: Props) {
   return (
     <View
       style={{
@@ -37,6 +45,8 @@ export default function AuthInput({ placeholder, icon: Icon, secure }: Props) {
           fontSize: 15,
           color: "#111827",
         }}
+        value={value}
+        onChangeText={onChangeText}
       />
     </View>
   );
