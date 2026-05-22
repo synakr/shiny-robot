@@ -55,6 +55,13 @@ export default function TeacherTabsLayout() {
       />
 
       <Tabs.Screen
+        name="batches"
+        options={{
+          title: "Batches",
+          tabBarIcon: ({ color }) => <BookA size={22} color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="students"
         options={{
           title: "Students",
@@ -63,16 +70,9 @@ export default function TeacherTabsLayout() {
       />
 
       <Tabs.Screen
-        name="batches"
+        name="courses"
         options={{
-          title: "Batches",
-          tabBarIcon: ({ color }) => <BookA size={22} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="reports"
-        options={{
-          title: "Reports",
+          title: "Courses",
           tabBarIcon: ({ color }) => <BarChart3 size={22} color={color} />,
         }}
       />

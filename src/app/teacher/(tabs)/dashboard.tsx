@@ -11,10 +11,9 @@ import {
   FileText,
   ListTodo,
   Megaphone,
-  Rocket,
   UserCheck,
   Users,
-  Wallet,
+  Wallet
 } from "lucide-react-native";
 
 import ActivityItem from "@/components/ActivityItems";
@@ -129,13 +128,13 @@ export default function TeacherDashboardScreen() {
             justifyContent: "space-between",
             gap: 10,
           }}>
-          <QuickActionCard
+          {/* <QuickActionCard
             icon={Users}
             title="View Students"
             color="#6C63FF"
             bg="#EEE8FF"
             onPress={() => router.push("/teacher/students")}
-          />
+          /> */}
 
           <QuickActionCard
             icon={Megaphone}
@@ -167,12 +166,12 @@ export default function TeacherDashboardScreen() {
             bg="#FFE4E6"
           />
 
-          <QuickActionCard
+          {/* <QuickActionCard
             icon={Rocket}
             title="Launch Course"
             color="#8B5CF6"
             bg="#F3E8FF"
-          />
+          /> */}
 
           <QuickActionCard
             icon={Archive}
