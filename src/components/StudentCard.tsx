@@ -1,13 +1,26 @@
-import { router } from "expo-router";
+
 import { IndianRupee, MessageCircle, Phone } from "lucide-react-native";
+
 import { Text, TouchableOpacity, View } from "react-native";
 
 type Props = {
   name: string;
+
   className: string;
+
   attendance: string;
+
   payment: string;
+
   paid?: boolean;
+
+  batchName?: string;
+
+  phone?: string;
+
+  parentPhone?: string;
+
+  onPress?: () => void;
 };
 
 export default function StudentCard({
@@ -16,11 +29,12 @@ export default function StudentCard({
   attendance,
   payment,
   paid,
+  onPress,
 }: Props) {
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      onPress={() => router.push("/teacher/student-details")}
+      onPress={onPress}
       style={{
         backgroundColor: "#FFF",
         borderRadius: 22,
@@ -83,14 +97,19 @@ export default function StudentCard({
         <View
           style={{
             backgroundColor: paid ? "#DCFCE7" : "#FEF3C7",
+
             paddingHorizontal: 12,
+
             paddingVertical: 6,
+
             borderRadius: 12,
           }}>
           <Text
             style={{
               color: paid ? "#10B981" : "#D97706",
+
               fontSize: 12,
+
               fontWeight: "700",
             }}>
             {payment}
@@ -128,7 +147,14 @@ export default function StudentCard({
   );
 }
 
-function InfoBox({ title, value }: { title: string; value: string }) {
+function InfoBox({
+  title,
+  value,
+}: {
+  title: string;
+
+  value: string;
+}) {
   return (
     <View
       style={{
@@ -155,7 +181,14 @@ function InfoBox({ title, value }: { title: string; value: string }) {
   );
 }
 
-function ActionButton({ icon: Icon, label }: { icon: any; label: string }) {
+function ActionButton({
+  icon: Icon,
+  label,
+}: {
+  icon: any;
+
+  label: string;
+}) {
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -164,8 +197,11 @@ function ActionButton({ icon: Icon, label }: { icon: any; label: string }) {
         height: 36,
         borderRadius: 14,
         backgroundColor: "#F3F4F6",
+
         flexDirection: "row",
+
         justifyContent: "center",
+
         alignItems: "center",
       }}>
       <Icon size={16} color="#4B5563" />

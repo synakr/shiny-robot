@@ -4,10 +4,12 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
+  Archive,
   Bell,
   CheckSquare,
   CreditCard,
   FileText,
+  ListTodo,
   Megaphone,
   Rocket,
   UserCheck,
@@ -18,8 +20,12 @@ import {
 import ActivityItem from "@/components/ActivityItems";
 import QuickActionCard from "@/components/QuickActionCard";
 import TeacherStatCard from "@/components/TeacherStatCard";
+import { useAuthStore } from "@/store/authStore";
 
 export default function TeacherDashboardScreen() {
+  const { teacher } = useAuthStore();
+
+  console.log(teacher);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
       <ScrollView
@@ -62,7 +68,7 @@ export default function TeacherDashboardScreen() {
                 fontWeight: "800",
                 color: "#111827",
               }}>
-              Welcome, Teacher! 👋
+              Welcome, {teacher?.teacher_name || "Teacher"}! 👋
             </Text>
 
             <Text
@@ -71,7 +77,7 @@ export default function TeacherDashboardScreen() {
                 fontSize: 14,
                 color: "#4B5563",
               }}>
-              Here's what's happening today.
+              {teacher?.institute_name || "Manage your classes easily."}
             </Text>
           </View>
         </View>
@@ -136,6 +142,7 @@ export default function TeacherDashboardScreen() {
             title="Send Announcement"
             color="#F59E0B"
             bg="#FEF3C7"
+            onPress={() => router.push("/teacher/create-announcement")}
           />
 
           <QuickActionCard
@@ -165,6 +172,22 @@ export default function TeacherDashboardScreen() {
             title="Launch Course"
             color="#8B5CF6"
             bg="#F3E8FF"
+          />
+
+          <QuickActionCard
+            icon={Archive}
+            title="Saved Tasks"
+            color="#F59E0B"
+            bg="#FEF3C7"
+            onPress={() => router.push("/teacher/tasks")}
+          />
+
+          <QuickActionCard
+            icon={ListTodo}
+            title="Announcements"
+            color="#10B981"
+            bg="#DCFCE7"
+            onPress={() => router.push("/teacher/announcements")}
           />
         </View>
 

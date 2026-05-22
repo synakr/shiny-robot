@@ -1,10 +1,13 @@
 import {
+  RefreshControl,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+
+import { useCallback, useEffect, useState } from "react";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -15,45 +18,56 @@ import {
   SlidersHorizontal,
 } from "lucide-react-native";
 
+import { router } from "expo-router";
+
 import FilterChip from "@/components/FilterChip";
+
 import StudentCard from "@/components/StudentCard";
 
-const students = [
-  {
-    name: "Aarav Sharma",
-    className: "Class 11 • Batch A",
-    attendance: "92%",
-    payment: "Paid",
-    paid: true,
-  },
-  {
-    name: "Priya Das",
-    className: "Class 12 • Batch B",
-    attendance: "85%",
-    payment: "Pending",
-    paid: false,
-  },
-  {
-    name: "Rahul Verma",
-    className: "Class 11 • Batch A",
-    attendance: "96%",
-    payment: "Paid",
-    paid: true,
-  },
-  {
-    name: "Ananya Roy",
-    className: "Class 10 • Batch C",
-    attendance: "78%",
-    payment: "Pending",
-    paid: false,
-  },
-];
+import { useAuthStore } from "@/store/authStore";
+
+import { getStudentsByTeacher } from "@/services/students";
 
 export default function StudentsScreen() {
+  const { teacher } = useAuthStore();
+
+  const [students, setStudents] = useState<any[]>([]);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const loadStudents = useCallback(async () => {
+    if (!teacher?.id) return;
+
+    const response = await getStudentsByTeacher(teacher.id);
+
+    if (response.success) {
+      setStudents(response.data || []);
+    }
+  }, [teacher]);
+
+  useEffect(() => {
+    loadStudents();
+  }, [loadStudents]);
+
+  async function onRefresh() {
+    setRefreshing(true);
+
+    await loadStudents();
+
+    setRefreshing(false);
+  }
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: "#F8F8F8",
+      }}>
       <View style={{ flex: 1 }}>
         <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingBottom: 220,
@@ -131,9 +145,13 @@ export default function StudentsScreen() {
               paddingBottom: 4,
             }}>
             <FilterChip label="All" active />
+
             <FilterChip label="Paid" />
+
             <FilterChip label="Pending" />
+
             <FilterChip label="Batch A" />
+
             <FilterChip label="Batch B" />
           </ScrollView>
 
@@ -145,11 +163,16 @@ export default function StudentsScreen() {
               marginTop: 16,
               gap: 12,
             }}>
-            <StatBox title="Total" value="248" color="#6C63FF" bg="#EEE8FF" />
+            <StatBox
+              title="Total"
+              value={`${students.length}`}
+              color="#6C63FF"
+              bg="#EEE8FF"
+            />
 
-            <StatBox title="Paid" value="210" color="#10B981" bg="#DCFCE7" />
+            <StatBox title="Paid" value="18" color="#10B981" bg="#DCFCE7" />
 
-            <StatBox title="Pending" value="38" color="#F59E0B" bg="#FEF3C7" />
+            <StatBox title="Pending" value="4" color="#F59E0B" bg="#FEF3C7" />
           </View>
 
           {/* LIST */}
@@ -161,11 +184,29 @@ export default function StudentsScreen() {
             {students.map((student, index) => (
               <StudentCard
                 key={index}
-                name={student.name}
-                className={student.className}
-                attendance={student.attendance}
-                payment={student.payment}
-                paid={student.paid}
+                name={student.student_name}
+                className={`${student.class_name} • ${student.batch_name}`}
+                attendance="92%"
+                payment={index % 2 === 0 ? "Paid" : "Pending"}
+                paid={index % 2 === 0}
+                batchName={student.batch_name}
+                phone={student.phone}
+                parentPhone={student.parent_phone}
+                onPress={() =>
+                  router.push({
+                    pathname: "/teacher/student-details",
+
+                    params: {
+                      name: student.student_name,
+
+                      className: student.class_name,
+
+                      batch: student.batch_name,
+
+                      phone: student.phone,
+                    },
+                  })
+                }
               />
             ))}
           </View>
@@ -173,10 +214,11 @@ export default function StudentsScreen() {
 
         {/* FAB */}
         <TouchableOpacity
+          onPress={() => router.push("/teacher/add-student")}
           style={{
             position: "absolute",
             right: 20,
-            bottom: 28,
+            bottom: 100,
             width: 62,
             height: 62,
             borderRadius: 31,

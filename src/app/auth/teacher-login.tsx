@@ -12,7 +12,8 @@ import AuthInput from "@/components/AuthInput";
 
 import { teacherLogin } from "@/services/auth";
 
-import { supabase } from "@/lib/supabase";
+import { getCurrentTeacher } from "@/services/teacher";
+
 import { useAuthStore } from "@/store/authStore";
 
 export default function TeacherLoginScreen() {
@@ -20,7 +21,7 @@ export default function TeacherLoginScreen() {
 
   const [password, setPassword] = useState("");
 
-  const { setUser, setRole } = useAuthStore();
+  const { setUser, setRole, setTeacher } = useAuthStore();
 
   return (
     <SafeAreaView
@@ -129,22 +130,24 @@ export default function TeacherLoginScreen() {
               return;
             }
 
-            console.log("AUTH USER:");
-            console.log(authUser);
+            // Fetch Teacher Profile
+            const teacherResponse = await getCurrentTeacher(authUser.id);
 
-            // Fetch matching teacher row
-            const teacherResponse = await supabase
-              .from("teachers")
-              .select("*")
-              .eq("auth_id", authUser.id)
-              .single();
+            if (!teacherResponse.success) {
+              Alert.alert(
+                "Teacher Profile Missing",
+                "No teacher profile found.",
+              );
 
-            console.log("MATCHED TEACHER:");
-            console.log(teacherResponse);
+              return;
+            }
 
+            // Store Global State
             setUser(authUser);
 
             setRole("teacher");
+
+            setTeacher(teacherResponse.data);
 
             router.replace("/teacher/dashboard");
           }}

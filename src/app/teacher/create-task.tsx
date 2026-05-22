@@ -1,15 +1,76 @@
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useState } from "react";
+
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { ArrowLeft, CalendarDays, Paperclip } from "lucide-react-native";
 
+import { router, useLocalSearchParams } from "expo-router";
+
 import FormInput from "@/components/FormInput";
+
 import SelectBox from "@/components/SelectBox";
 
+import { useAuthStore } from "@/store/authStore";
+
+import { createTask } from "@/services/tasks";
+
 export default function CreateTaskScreen() {
+  const { teacher } = useAuthStore();
+
+  const params = useLocalSearchParams();
+
+  const [title, setTitle] = useState((params.title as string) || "");
+
+  const [description, setDescription] = useState(
+    (params.description as string) || "",
+  );
+
+  const [className, setClassName] = useState("");
+
+  const [batchName, setBatchName] = useState((params.batch as string) || "");
+
+  const [dueDate, setDueDate] = useState((params.deadline as string) || "");
+
+  async function handlePublishTask() {
+    if (!title) {
+      Alert.alert("Required", "Please enter task title.");
+
+      return;
+    }
+
+    const response = await createTask({
+      teacherId: teacher?.id || "",
+
+      title,
+
+      description,
+
+      className,
+
+      batchName,
+
+      dueDate,
+    });
+
+    if (!response.success) {
+      Alert.alert("Error", response.error?.message);
+
+      return;
+    }
+
+    Alert.alert("Success", "Task published successfully.");
+
+    router.back();
+  }
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: "#F8F8F8",
+      }}>
       <View style={{ flex: 1 }}>
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -33,7 +94,7 @@ export default function CreateTaskScreen() {
                   flexDirection: "row",
                   alignItems: "center",
                 }}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => router.back()}>
                   <ArrowLeft size={24} color="#111827" />
                 </TouchableOpacity>
 
@@ -67,15 +128,34 @@ export default function CreateTaskScreen() {
               paddingHorizontal: 20,
               marginTop: 28,
             }}>
-            <FormInput label="Task Title" placeholder="Enter task title" />
+            <FormInput
+              label="Task Title"
+              placeholder="Enter task title"
+              value={title}
+              onChangeText={setTitle}
+            />
 
             <FormInput
               label="Description"
               placeholder="Write task details..."
               multiline
+              value={description}
+              onChangeText={setDescription}
             />
 
-            <SelectBox label="Select Batch" value="Class 11 • Batch A" />
+            <FormInput
+              label="Class"
+              placeholder="Enter class"
+              value={className}
+              onChangeText={setClassName}
+            />
+
+            <FormInput
+              label="Batch"
+              placeholder="Enter batch"
+              value={batchName}
+              onChangeText={setBatchName}
+            />
 
             <SelectBox label="Subject" value="Mathematics" />
 
@@ -113,7 +193,7 @@ export default function CreateTaskScreen() {
                     fontSize: 15,
                     color: "#111827",
                   }}>
-                  12 May 2024
+                  {dueDate || "Select Due Date"}
                 </Text>
 
                 <CalendarDays size={20} color="#667085" />
@@ -142,6 +222,7 @@ export default function CreateTaskScreen() {
               </Text>
 
               <TouchableOpacity
+                activeOpacity={0.9}
                 style={{
                   height: 110,
                   borderRadius: 20,
@@ -180,7 +261,7 @@ export default function CreateTaskScreen() {
                     fontSize: 12,
                     color: "#98A2B3",
                   }}>
-                  Max file size 20 MB
+                  Coming Soon
                 </Text>
               </TouchableOpacity>
             </View>
@@ -196,6 +277,8 @@ export default function CreateTaskScreen() {
             bottom: 24,
           }}>
           <TouchableOpacity
+            activeOpacity={0.9}
+            onPress={handlePublishTask}
             style={{
               height: 56,
               borderRadius: 18,

@@ -1,6 +1,12 @@
 import { Tabs } from "expo-router";
 
-import { BarChart3, Home, MoreHorizontal, Users } from "lucide-react-native";
+import {
+  BarChart3,
+  BookA,
+  Home,
+  MoreHorizontal,
+  Users,
+} from "lucide-react-native";
 
 export default function TeacherTabsLayout() {
   return (
@@ -56,6 +62,13 @@ export default function TeacherTabsLayout() {
         }}
       />
 
+      <Tabs.Screen
+        name="batches"
+        options={{
+          title: "Batches",
+          tabBarIcon: ({ color }) => <BookA size={22} color={color} />,
+        }}
+      />
       <Tabs.Screen
         name="reports"
         options={{

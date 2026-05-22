@@ -1,11 +1,13 @@
 import { supabase } from "@/lib/supabase";
 
-export async function getCurrentTeacher(authId: string) {
+export async function getStudentsByTeacher(teacherId: string) {
   const { data, error } = await supabase
-    .from("teachers")
+    .from("students")
     .select("*")
-    .eq("auth_id", authId)
-    .single();
+    .eq("teacher_id", teacherId)
+    .order("created_at", {
+      ascending: false,
+    });
 
   if (error) {
     return {

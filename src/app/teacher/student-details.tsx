@@ -2,25 +2,43 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { router, useLocalSearchParams } from "expo-router";
+
 import {
-    ArrowLeft,
-    CalendarCheck,
-    CheckSquare,
-    FileText,
-    IndianRupee,
-    MessageCircle,
-    Phone,
-    TrendingUp,
-    Wallet,
+  ArrowLeft,
+  CalendarCheck,
+  CheckSquare,
+  FileText,
+  IndianRupee,
+  MessageCircle,
+  Phone,
+  TrendingUp,
+  Wallet,
 } from "lucide-react-native";
 
 import ActionGridButton from "@/components/ActionGridButton";
+
 import DetailStatCard from "@/components/DetailStatCard";
+
 import SubjectProgress from "@/components/SubjectProgress";
 
 export default function StudentDetailsScreen() {
+  const params = useLocalSearchParams();
+
+  const studentName = (params.name as string) || "Student";
+
+  const className = (params.className as string) || "Class";
+
+  const batch = (params.batch as string) || "Batch";
+
+  const phone = (params.phone as string) || "Not Available";
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: "#F8F8F8",
+      }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
@@ -37,7 +55,7 @@ export default function StudentDetailsScreen() {
               flexDirection: "row",
               alignItems: "center",
             }}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.back()}>
               <ArrowLeft size={24} color="#111827" />
             </TouchableOpacity>
 
@@ -88,7 +106,7 @@ export default function StudentDetailsScreen() {
                   fontWeight: "800",
                   color: "#6C63FF",
                 }}>
-                A
+                {studentName.charAt(0)}
               </Text>
             </View>
 
@@ -100,7 +118,7 @@ export default function StudentDetailsScreen() {
                   fontWeight: "800",
                   color: "#111827",
                 }}>
-                Aarav Sharma
+                {studentName}
               </Text>
 
               <Text
@@ -109,7 +127,16 @@ export default function StudentDetailsScreen() {
                   fontSize: 14,
                   color: "#667085",
                 }}>
-                Class 11 • Batch A
+                {className} • {batch}
+              </Text>
+
+              <Text
+                style={{
+                  marginTop: 6,
+                  fontSize: 13,
+                  color: "#98A2B3",
+                }}>
+                {phone}
               </Text>
 
               <View
