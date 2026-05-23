@@ -1,4 +1,10 @@
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { useEffect, useState } from "react";
 
@@ -14,6 +20,20 @@ import { getBatchesByTeacher } from "@/services/batches";
 
 export default function BatchesScreen() {
   const { teacher } = useAuthStore();
+  const [refreshing, setRefreshing] = useState(false);
+  async function onRefresh() {
+    setRefreshing(true);
+
+    if (!teacher?.id) return;
+
+    const response = await getBatchesByTeacher(teacher.id);
+
+    if (response.success) {
+      setBatches(response.data || []);
+    }
+
+    setRefreshing(false);
+  }
 
   const [batches, setBatches] = useState<any[]>([]);
 
@@ -39,6 +59,9 @@ export default function BatchesScreen() {
       }}>
       <View style={{ flex: 1 }}>
         <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
             paddingBottom: 140,
@@ -145,10 +168,13 @@ export default function BatchesScreen() {
                   key={index}
                   batchId={batch.batch_id}
                   batchName={batch.batch_name}
+                  batchCategory={batch.batch_category}
+                  batchNumber={batch.batch_number}
                   className={batch.class_name}
                   year={batch.year}
                   totalStudents={batch.total_students}
                   active={batch.is_active}
+                  admissionOpen={batch.admission_open}
                 />
               ))
             )}
@@ -184,14 +210,21 @@ export default function BatchesScreen() {
 function BatchCard({
   batchId,
   batchName,
+  batchCategory,
+  batchNumber,
   className,
   year,
   totalStudents,
   active,
+  admissionOpen,
 }: {
   batchId: string;
 
   batchName: string;
+
+  batchCategory: string;
+
+  batchNumber: string;
 
   className: string;
 
@@ -200,13 +233,15 @@ function BatchCard({
   totalStudents: number;
 
   active: boolean;
+
+  admissionOpen: boolean;
 }) {
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       style={{
         backgroundColor: "#FFF",
-        borderRadius: 24,
+        borderRadius: 26,
         padding: 18,
         marginBottom: 16,
         shadowColor: "#000",
@@ -219,12 +254,12 @@ function BatchCard({
         style={{
           flexDirection: "row",
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: "flex-start",
         }}>
         <View style={{ flex: 1 }}>
           <Text
             style={{
-              fontSize: 18,
+              fontSize: 19,
               fontWeight: "800",
               color: "#111827",
             }}>
@@ -233,11 +268,11 @@ function BatchCard({
 
           <Text
             style={{
-              marginTop: 4,
+              marginTop: 6,
               fontSize: 14,
               color: "#667085",
             }}>
-            {batchName} • Class {className}
+            {batchName} • {batchCategory}
           </Text>
         </View>
 
@@ -262,17 +297,17 @@ function BatchCard({
         </View>
       </View>
 
-      {/* STATS */}
+      {/* META */}
       <View
         style={{
           flexDirection: "row",
           marginTop: 20,
         }}>
+        <InfoBox title="Class" value={className} />
+
+        <InfoBox title="Batch" value={batchNumber} />
+
         <InfoBox title="Year" value={year} />
-
-        <InfoBox title="Students" value={`${totalStudents}`} />
-
-        <InfoBox title="Course" value={batchName} />
       </View>
 
       {/* FOOTER */}
@@ -280,19 +315,46 @@ function BatchCard({
         style={{
           flexDirection: "row",
           alignItems: "center",
-          marginTop: 18,
+          justifyContent: "space-between",
+          marginTop: 22,
         }}>
-        <Users size={16} color="#6C63FF" />
-
-        <Text
+        <View
           style={{
-            marginLeft: 8,
-            fontSize: 13,
-            fontWeight: "600",
-            color: "#6C63FF",
+            flexDirection: "row",
+            alignItems: "center",
           }}>
-          Manage Batch
-        </Text>
+          <Users size={16} color="#6C63FF" />
+
+          <Text
+            style={{
+              marginLeft: 8,
+              fontSize: 13,
+              fontWeight: "700",
+              color: "#6C63FF",
+            }}>
+            {totalStudents} Students
+          </Text>
+        </View>
+
+        <View
+          style={{
+            backgroundColor: admissionOpen ? "#DBEAFE" : "#F3F4F6",
+
+            paddingHorizontal: 12,
+
+            paddingVertical: 6,
+
+            borderRadius: 12,
+          }}>
+          <Text
+            style={{
+              fontSize: 12,
+              fontWeight: "700",
+              color: admissionOpen ? "#2563EB" : "#667085",
+            }}>
+            {admissionOpen ? "Admissions Open" : "Admissions Closed"}
+          </Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -321,7 +383,7 @@ function InfoBox({
 
       <Text
         style={{
-          marginTop: 4,
+          marginTop: 5,
           fontSize: 15,
           fontWeight: "700",
           color: "#111827",

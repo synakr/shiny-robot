@@ -20,9 +20,22 @@ export async function getAnnouncementsByTeacher(teacherId: string) {
 
 export async function createAnnouncement({
   teacherId,
+
   title,
+
   message,
+
+  targetType,
+
+  batchId,
+
   batchName,
+
+  batchCategory,
+
+  className,
+
+  year,
 }: {
   teacherId: string;
 
@@ -30,7 +43,17 @@ export async function createAnnouncement({
 
   message: string;
 
-  batchName: string;
+  targetType: string;
+
+  batchId?: string;
+
+  batchName?: string;
+
+  batchCategory?: string;
+
+  className?: string;
+
+  year?: string;
 }) {
   const response = await supabase.from("announcements").insert({
     teacher_id: teacherId,
@@ -39,7 +62,17 @@ export async function createAnnouncement({
 
     message,
 
-    batch_name: batchName,
+    target_type: targetType,
+
+    batch_id: batchId || null,
+
+    batch_name: batchName || null,
+
+    batch_category: batchCategory || null,
+
+    class_name: className || null,
+
+    year: year || null,
   });
 
   return {

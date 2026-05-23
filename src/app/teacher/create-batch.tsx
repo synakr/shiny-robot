@@ -1,6 +1,13 @@
 import { useState } from "react";
 
-import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  ScrollView,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -21,12 +28,25 @@ export default function CreateBatchScreen() {
 
   const [batchName, setBatchName] = useState("");
 
+  const [batchCategory, setBatchCategory] = useState("");
+
+  const [batchNumber, setBatchNumber] = useState("");
+
   const [className, setClassName] = useState("");
 
   const [year, setYear] = useState("");
 
+  const [admissionOpen, setAdmissionOpen] = useState(true);
+
   async function handleCreateBatch() {
-    if (!batchId || !batchName || !className || !year) {
+    if (
+      !batchId ||
+      !batchName ||
+      !batchCategory ||
+      !batchNumber ||
+      !className ||
+      !year
+    ) {
       Alert.alert("Required", "Please fill all fields.");
 
       return;
@@ -39,9 +59,15 @@ export default function CreateBatchScreen() {
 
       batchName,
 
+      batchCategory,
+
+      batchNumber,
+
       className,
 
       year,
+
+      admissionOpen,
     });
 
     if (!response.success) {
@@ -65,7 +91,7 @@ export default function CreateBatchScreen() {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            paddingBottom: 140,
+            paddingBottom: 350,
           }}>
           {/* HEADER */}
           <View
@@ -102,21 +128,35 @@ export default function CreateBatchScreen() {
             }}>
             <FormInput
               label="Batch ID"
-              placeholder="GT12JEE26"
+              placeholder="GT12JEE26A"
               value={batchId}
               onChangeText={setBatchId}
             />
 
             <FormInput
               label="Batch Name"
-              placeholder="JEE"
+              placeholder="Elite Rankers"
               value={batchName}
               onChangeText={setBatchName}
             />
 
             <FormInput
+              label="Batch Category"
+              placeholder="JEE / NEET / Foundation"
+              value={batchCategory}
+              onChangeText={setBatchCategory}
+            />
+
+            <FormInput
+              label="Batch Number"
+              placeholder="A"
+              value={batchNumber}
+              onChangeText={setBatchNumber}
+            />
+
+            <FormInput
               label="Class"
-              placeholder="11"
+              placeholder="11 / 12 / D1"
               value={className}
               onChangeText={setClassName}
             />
@@ -127,6 +167,49 @@ export default function CreateBatchScreen() {
               value={year}
               onChangeText={setYear}
             />
+
+            {/* ADMISSION */}
+            <View
+              style={{
+                marginTop: 8,
+                backgroundColor: "#FFF",
+                borderRadius: 20,
+                paddingHorizontal: 18,
+                paddingVertical: 16,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    fontWeight: "700",
+                    color: "#111827",
+                  }}>
+                  Admissions Open
+                </Text>
+
+                <Text
+                  style={{
+                    marginTop: 4,
+                    fontSize: 13,
+                    color: "#667085",
+                  }}>
+                  Allow new student enrollments
+                </Text>
+              </View>
+
+              <Switch
+                value={admissionOpen}
+                onValueChange={setAdmissionOpen}
+                trackColor={{
+                  false: "#D1D5DB",
+                  true: "#C4B5FD",
+                }}
+                thumbColor={admissionOpen ? "#6C63FF" : "#FFF"}
+              />
+            </View>
           </View>
         </ScrollView>
 

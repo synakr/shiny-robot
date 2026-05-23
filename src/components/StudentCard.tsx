@@ -1,5 +1,4 @@
-
-import { IndianRupee, MessageCircle, Phone } from "lucide-react-native";
+import { IndianRupee, MessageCircle, Phone, Trophy } from "lucide-react-native";
 
 import { Text, TouchableOpacity, View } from "react-native";
 
@@ -8,13 +7,21 @@ type Props = {
 
   className: string;
 
+  batchName?: string;
+
+  batchId?: string;
+
   attendance: string;
+
+  tasksCompleted?: number;
+
+  performanceScore?: number;
+
+  rank?: number;
 
   payment: string;
 
   paid?: boolean;
-
-  batchName?: string;
 
   phone?: string;
 
@@ -26,7 +33,12 @@ type Props = {
 export default function StudentCard({
   name,
   className,
+  batchName,
+  batchId,
   attendance,
+  tasksCompleted,
+  performanceScore,
+  rank,
   payment,
   paid,
   onPress,
@@ -37,9 +49,9 @@ export default function StudentCard({
       onPress={onPress}
       style={{
         backgroundColor: "#FFF",
-        borderRadius: 22,
-        padding: 14,
-        marginBottom: 12,
+        borderRadius: 24,
+        padding: 16,
+        marginBottom: 14,
         shadowColor: "#000",
         shadowOpacity: 0.03,
         shadowRadius: 6,
@@ -51,12 +63,12 @@ export default function StudentCard({
           flexDirection: "row",
           alignItems: "center",
         }}>
-        {/* Avatar */}
+        {/* AVATAR */}
         <View
           style={{
-            width: 46,
-            height: 46,
-            borderRadius: 16,
+            width: 52,
+            height: 52,
+            borderRadius: 18,
             backgroundColor: "#EEE8FF",
             justifyContent: "center",
             alignItems: "center",
@@ -64,7 +76,7 @@ export default function StudentCard({
           }}>
           <Text
             style={{
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: "800",
               color: "#6C63FF",
             }}>
@@ -72,12 +84,12 @@ export default function StudentCard({
           </Text>
         </View>
 
-        {/* Info */}
+        {/* INFO */}
         <View style={{ flex: 1 }}>
           <Text
             style={{
               fontSize: 16,
-              fontWeight: "700",
+              fontWeight: "800",
               color: "#111827",
             }}>
             {name}
@@ -89,11 +101,20 @@ export default function StudentCard({
               fontSize: 13,
               color: "#667085",
             }}>
-            {className}
+            Class {className} • {batchName}
+          </Text>
+
+          <Text
+            style={{
+              marginTop: 3,
+              fontSize: 12,
+              color: "#98A2B3",
+            }}>
+            {batchId}
           </Text>
         </View>
 
-        {/* Payment Badge */}
+        {/* PAYMENT */}
         <View
           style={{
             backgroundColor: paid ? "#DCFCE7" : "#FEF3C7",
@@ -121,20 +142,22 @@ export default function StudentCard({
       <View
         style={{
           flexDirection: "row",
-          marginTop: 16,
+          marginTop: 18,
         }}>
-        <InfoBox title="Attendance" value={attendance} />
+        <InfoBox title="Attendance" value={`${attendance}%`} />
 
-        <InfoBox title="Tasks" value="12/15" />
+        <InfoBox title="Tasks" value={`${tasksCompleted || 0}`} />
 
-        <InfoBox title="Performance" value="85%" />
+        <InfoBox title="Score" value={`${performanceScore || 0}`} />
+
+        <RankBox rank={rank || 0} />
       </View>
 
       {/* ACTIONS */}
       <View
         style={{
           flexDirection: "row",
-          marginTop: 14,
+          marginTop: 16,
           gap: 10,
         }}>
         <ActionButton icon={Phone} label="Call" />
@@ -162,7 +185,7 @@ function InfoBox({
       }}>
       <Text
         style={{
-          fontSize: 12,
+          fontSize: 11,
           color: "#98A2B3",
         }}>
         {title}
@@ -170,12 +193,44 @@ function InfoBox({
 
       <Text
         style={{
-          marginTop: 4,
+          marginTop: 5,
           fontSize: 15,
           fontWeight: "700",
           color: "#111827",
         }}>
         {value}
+      </Text>
+    </View>
+  );
+}
+
+function RankBox({ rank }: { rank: number }) {
+  return (
+    <View
+      style={{
+        width: 58,
+        alignItems: "center",
+      }}>
+      <View
+        style={{
+          width: 34,
+          height: 34,
+          borderRadius: 12,
+          backgroundColor: "#FEF3C7",
+          justifyContent: "center",
+          alignItems: "center",
+        }}>
+        <Trophy size={16} color="#F59E0B" />
+      </View>
+
+      <Text
+        style={{
+          marginTop: 5,
+          fontSize: 12,
+          fontWeight: "800",
+          color: "#111827",
+        }}>
+        #{rank}
       </Text>
     </View>
   );
@@ -194,7 +249,7 @@ function ActionButton({
       activeOpacity={0.8}
       style={{
         flex: 1,
-        height: 36,
+        height: 38,
         borderRadius: 14,
         backgroundColor: "#F3F4F6",
 

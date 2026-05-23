@@ -89,7 +89,7 @@ export default function StudentsScreen() {
                   flexDirection: "row",
                   alignItems: "center",
                 }}>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => router.back()}>
                   <ArrowLeft size={24} color="#111827" />
                 </TouchableOpacity>
 
@@ -150,9 +150,9 @@ export default function StudentsScreen() {
 
             <FilterChip label="Pending" />
 
-            <FilterChip label="Batch A" />
+            <FilterChip label="JEE" />
 
-            <FilterChip label="Batch B" />
+            <FilterChip label="NEET" />
           </ScrollView>
 
           {/* QUICK STATS */}
@@ -170,9 +170,25 @@ export default function StudentsScreen() {
               bg="#EEE8FF"
             />
 
-            <StatBox title="Paid" value="18" color="#10B981" bg="#DCFCE7" />
+            <StatBox
+              title="Paid"
+              value={`${
+                students.filter((student) => student.payment_status === "Paid")
+                  .length
+              }`}
+              color="#10B981"
+              bg="#DCFCE7"
+            />
 
-            <StatBox title="Pending" value="4" color="#F59E0B" bg="#FEF3C7" />
+            <StatBox
+              title="Pending"
+              value={`${
+                students.filter((student) => student.payment_status !== "Paid")
+                  .length
+              }`}
+              color="#F59E0B"
+              bg="#FEF3C7"
+            />
           </View>
 
           {/* LIST */}
@@ -181,34 +197,79 @@ export default function StudentsScreen() {
               paddingHorizontal: 20,
               marginTop: 20,
             }}>
-            {students.map((student, index) => (
-              <StudentCard
-                key={index}
-                name={student.student_name}
-                className={`${student.class_name} • ${student.batch_name}`}
-                attendance="92%"
-                payment={index % 2 === 0 ? "Paid" : "Pending"}
-                paid={index % 2 === 0}
-                batchName={student.batch_name}
-                phone={student.phone}
-                parentPhone={student.parent_phone}
-                onPress={() =>
-                  router.push({
-                    pathname: "/teacher/student-details",
+            {students.length === 0 ? (
+              <View
+                style={{
+                  backgroundColor: "#FFF",
+                  borderRadius: 24,
+                  padding: 30,
+                  alignItems: "center",
+                }}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontWeight: "700",
+                    color: "#111827",
+                  }}>
+                  No Students Found
+                </Text>
 
-                    params: {
-                      name: student.student_name,
+                <Text
+                  style={{
+                    marginTop: 6,
+                    fontSize: 13,
+                    color: "#667085",
+                    textAlign: "center",
+                  }}>
+                  Add students to start managing your batches
+                </Text>
+              </View>
+            ) : (
+              students.map((student, index) => (
+                <StudentCard
+                  key={index}
+                  name={student.student_name}
+                  className={student.class_name}
+                  batchName={student.batch_name}
+                  batchId={student.batch_id}
+                  attendance={`${student.attendance || 0}`}
+                  tasksCompleted={student.tasks_completed || 0}
+                  performanceScore={student.performance_score || 0}
+                  rank={student.rank || 0}
+                  payment={student.payment_status || "Pending"}
+                  paid={student.payment_status === "Paid"}
+                  phone={student.phone}
+                  parentPhone={student.parent_phone}
+                  onPress={() =>
+                    router.push({
+                      pathname: "/teacher/student-details",
 
-                      className: student.class_name,
+                      params: {
+                        id: student.id,
 
-                      batch: student.batch_name,
+                        name: student.student_name,
 
-                      phone: student.phone,
-                    },
-                  })
-                }
-              />
-            ))}
+                        className: student.class_name,
+
+                        batch: student.batch_name,
+
+                        batchId: student.batch_id,
+
+                        phone: student.phone,
+
+                        performance: student.performance_score,
+
+                        attendance: student.attendance,
+
+                        tasks: student.tasks_completed,
+
+                        rank: student.rank,
+                      },
+                    })
+                  }
+                />
+              ))
+            )}
           </View>
         </ScrollView>
 
@@ -244,8 +305,11 @@ function StatBox({
   bg,
 }: {
   title: string;
+
   value: string;
+
   color: string;
+
   bg: string;
 }) {
   return (

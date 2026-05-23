@@ -10,9 +10,12 @@ import {
   CheckSquare,
   FileText,
   IndianRupee,
+  Mail,
   MessageCircle,
   Phone,
   TrendingUp,
+  Trophy,
+  UserSquare2,
   Wallet,
 } from "lucide-react-native";
 
@@ -31,7 +34,23 @@ export default function StudentDetailsScreen() {
 
   const batch = (params.batch as string) || "Batch";
 
+  const batchId = (params.batchId as string) || "Batch ID";
+
   const phone = (params.phone as string) || "Not Available";
+
+  const email = (params.email as string) || "No Email";
+
+  const attendance = (params.attendance as string) || "0";
+
+  const tasks = (params.tasks as string) || "0";
+
+  const performance = (params.performance as string) || "0";
+
+  const rank = (params.rank as string) || "-";
+
+  const paymentStatus = (params.payment as string) || "Pending";
+
+  const paid = paymentStatus === "Paid";
 
   return (
     <SafeAreaView
@@ -77,8 +96,8 @@ export default function StudentDetailsScreen() {
             marginHorizontal: 20,
             marginTop: 22,
             backgroundColor: "#FFF",
-            borderRadius: 24,
-            padding: 18,
+            borderRadius: 28,
+            padding: 20,
             shadowColor: "#000",
             shadowOpacity: 0.03,
             shadowRadius: 6,
@@ -87,14 +106,13 @@ export default function StudentDetailsScreen() {
           <View
             style={{
               flexDirection: "row",
-              alignItems: "center",
             }}>
-            {/* Avatar */}
+            {/* AVATAR */}
             <View
               style={{
-                width: 70,
-                height: 70,
-                borderRadius: 24,
+                width: 78,
+                height: 78,
+                borderRadius: 26,
                 backgroundColor: "#EEE8FF",
                 justifyContent: "center",
                 alignItems: "center",
@@ -102,7 +120,7 @@ export default function StudentDetailsScreen() {
               }}>
               <Text
                 style={{
-                  fontSize: 26,
+                  fontSize: 30,
                   fontWeight: "800",
                   color: "#6C63FF",
                 }}>
@@ -110,11 +128,14 @@ export default function StudentDetailsScreen() {
               </Text>
             </View>
 
-            {/* Info */}
-            <View style={{ flex: 1 }}>
+            {/* INFO */}
+            <View
+              style={{
+                flex: 1,
+              }}>
               <Text
                 style={{
-                  fontSize: 20,
+                  fontSize: 22,
                   fontWeight: "800",
                   color: "#111827",
                 }}>
@@ -123,41 +144,97 @@ export default function StudentDetailsScreen() {
 
               <Text
                 style={{
-                  marginTop: 4,
+                  marginTop: 5,
                   fontSize: 14,
                   color: "#667085",
                 }}>
-                {className} • {batch}
+                Class {className} • {batch}
               </Text>
 
               <Text
                 style={{
-                  marginTop: 6,
-                  fontSize: 13,
+                  marginTop: 5,
+                  fontSize: 12,
                   color: "#98A2B3",
                 }}>
-                {phone}
+                {batchId}
               </Text>
 
+              {/* BADGES */}
               <View
                 style={{
-                  marginTop: 10,
-                  alignSelf: "flex-start",
-                  backgroundColor: "#DCFCE7",
-                  paddingHorizontal: 12,
-                  paddingVertical: 6,
-                  borderRadius: 12,
+                  flexDirection: "row",
+                  marginTop: 12,
+                  gap: 10,
                 }}>
-                <Text
+                <View
                   style={{
-                    fontSize: 12,
-                    fontWeight: "700",
-                    color: "#10B981",
+                    backgroundColor: paid ? "#DCFCE7" : "#FEF3C7",
+
+                    paddingHorizontal: 12,
+
+                    paddingVertical: 6,
+
+                    borderRadius: 12,
                   }}>
-                  Fees Paid
-                </Text>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontWeight: "700",
+                      color: paid ? "#10B981" : "#D97706",
+                    }}>
+                    {paymentStatus}
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    backgroundColor: "#FEF3C7",
+
+                    paddingHorizontal: 12,
+
+                    paddingVertical: 6,
+
+                    borderRadius: 12,
+
+                    flexDirection: "row",
+
+                    alignItems: "center",
+                  }}>
+                  <Trophy size={13} color="#F59E0B" />
+
+                  <Text
+                    style={{
+                      marginLeft: 5,
+                      fontSize: 12,
+                      fontWeight: "700",
+                      color: "#D97706",
+                    }}>
+                    Rank #{rank}
+                  </Text>
+                </View>
               </View>
             </View>
+          </View>
+
+          {/* CONTACT INFO */}
+          <View
+            style={{
+              marginTop: 22,
+              borderTopWidth: 1,
+              borderTopColor: "#F1F5F9",
+              paddingTop: 18,
+              gap: 14,
+            }}>
+            <InfoRow icon={Phone} label="Phone" value={phone} />
+
+            <InfoRow icon={Mail} label="Email" value={email} />
+
+            <InfoRow
+              icon={UserSquare2}
+              label="Enrollment ID"
+              value={(params.enrollmentId as string) || "Not Available"}
+            />
           </View>
         </View>
 
@@ -170,21 +247,21 @@ export default function StudentDetailsScreen() {
           }}>
           <DetailStatCard
             title="Attendance"
-            value="92%"
+            value={`${attendance}%`}
             color="#10B981"
             bg="#DCFCE7"
           />
 
           <DetailStatCard
             title="Tasks"
-            value="12/15"
+            value={`${tasks}`}
             color="#F59E0B"
             bg="#FEF3C7"
           />
 
           <DetailStatCard
-            title="Fees"
-            value="Paid"
+            title="Score"
+            value={`${performance}`}
             color="#6C63FF"
             bg="#EEE8FF"
           />
@@ -258,7 +335,7 @@ export default function StudentDetailsScreen() {
           <ActivityRow
             icon={Wallet}
             title="Monthly fee payment received"
-            subtitle="1 May 2024"
+            subtitle="1 May 2026"
             color="#F59E0B"
             bg="#FEF3C7"
           />
@@ -267,8 +344,8 @@ export default function StudentDetailsScreen() {
 
           <ActivityRow
             icon={FileText}
-            title="Submitted DPP - Algebra"
-            subtitle="30 Apr 2024"
+            title="Submitted Assignment"
+            subtitle="30 Apr 2026"
             color="#2563EB"
             bg="#DBEAFE"
           />
@@ -315,7 +392,7 @@ export default function StudentDetailsScreen() {
                   fontWeight: "700",
                   color: "#111827",
                 }}>
-                Overall Progress
+                Academic Insights
               </Text>
 
               <Text
@@ -324,7 +401,7 @@ export default function StudentDetailsScreen() {
                   fontSize: 13,
                   color: "#667085",
                 }}>
-                Last 30 days performance
+                AI-powered student progress snapshot
               </Text>
             </View>
           </View>
@@ -420,6 +497,57 @@ function ActivityRow({
             color: "#667085",
           }}>
           {subtitle}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+function InfoRow({
+  icon: Icon,
+  label,
+  value,
+}: {
+  icon: any;
+  label: string;
+  value: string;
+}) {
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+      }}>
+      <View
+        style={{
+          width: 36,
+          height: 36,
+          borderRadius: 12,
+          backgroundColor: "#F3F4F6",
+          justifyContent: "center",
+          alignItems: "center",
+          marginRight: 12,
+        }}>
+        <Icon size={16} color="#667085" />
+      </View>
+
+      <View>
+        <Text
+          style={{
+            fontSize: 12,
+            color: "#98A2B3",
+          }}>
+          {label}
+        </Text>
+
+        <Text
+          style={{
+            marginTop: 2,
+            fontSize: 14,
+            fontWeight: "600",
+            color: "#111827",
+          }}>
+          {value}
         </Text>
       </View>
     </View>

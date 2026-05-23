@@ -1,10 +1,10 @@
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { ArrowLeft, Bell, Plus } from "lucide-react-native";
+import { ArrowLeft, Bell, Layers3, Plus, Users } from "lucide-react-native";
 
 import { router } from "expo-router";
 
@@ -30,6 +30,18 @@ export default function AnnouncementsScreen() {
 
     loadAnnouncements();
   }, [teacher]);
+
+  const todayCount = useMemo(() => {
+    return announcements.filter((item) => {
+      const today = new Date().toDateString();
+
+      return new Date(item.created_at).toDateString() === today;
+    }).length;
+  }, [announcements]);
+
+  const targetedCount = useMemo(() => {
+    return announcements.filter((item) => item.target_type !== "all").length;
+  }, [announcements]);
 
   return (
     <SafeAreaView
@@ -85,9 +97,19 @@ export default function AnnouncementsScreen() {
               color="#6C63FF"
             />
 
-            <StatCard title="Today" value="4" bg="#DCFCE7" color="#10B981" />
+            <StatCard
+              title="Today"
+              value={`${todayCount}`}
+              bg="#DCFCE7"
+              color="#10B981"
+            />
 
-            <StatCard title="Batches" value="3" bg="#FEF3C7" color="#F59E0B" />
+            <StatCard
+              title="Targeted"
+              value={`${targetedCount}`}
+              bg="#FEF3C7"
+              color="#F59E0B"
+            />
           </View>
 
           {/* LIST */}
@@ -100,17 +122,17 @@ export default function AnnouncementsScreen() {
               <View
                 style={{
                   backgroundColor: "#FFF",
-                  borderRadius: 24,
-                  padding: 30,
+                  borderRadius: 28,
+                  padding: 34,
                   alignItems: "center",
                 }}>
-                <Bell size={42} color="#98A2B3" />
+                <Bell size={44} color="#98A2B3" />
 
                 <Text
                   style={{
                     marginTop: 16,
-                    fontSize: 16,
-                    fontWeight: "700",
+                    fontSize: 17,
+                    fontWeight: "800",
                     color: "#111827",
                   }}>
                   No Announcements
@@ -118,12 +140,13 @@ export default function AnnouncementsScreen() {
 
                 <Text
                   style={{
-                    marginTop: 6,
+                    marginTop: 8,
                     fontSize: 13,
                     color: "#667085",
                     textAlign: "center",
+                    lineHeight: 20,
                   }}>
-                  Create your first announcement
+                  Create your first announcement to notify students
                 </Text>
               </View>
             ) : (
@@ -132,8 +155,11 @@ export default function AnnouncementsScreen() {
                   key={index}
                   title={announcement.title}
                   message={announcement.message}
-                  batch={announcement.batch_name}
-                  time="2 hours ago"
+                  targetType={announcement.target_type}
+                  batchName={announcement.batch_name}
+                  batchCategory={announcement.batch_category}
+                  className={announcement.class_name}
+                  time={formatTimeAgo(announcement.created_at)}
                 />
               ))
             )}
@@ -169,96 +195,184 @@ export default function AnnouncementsScreen() {
 function AnnouncementCard({
   title,
   message,
-  batch,
+  targetType,
+  batchName,
+  batchCategory,
+  className,
   time,
 }: {
   title: string;
 
   message: string;
 
-  batch: string;
+  targetType: string;
+
+  batchName?: string;
+
+  batchCategory?: string;
+
+  className?: string;
 
   time: string;
 }) {
+  function getAudienceLabel() {
+    if (targetType === "all") {
+      return "All Students";
+    }
+
+    if (targetType === "batch") {
+      return batchName;
+    }
+
+    if (targetType === "category") {
+      return batchCategory;
+    }
+
+    if (targetType === "class") {
+      return `Class ${className}`;
+    }
+
+    return "Students";
+  }
+
+  function getAudienceColor() {
+    if (targetType === "all") {
+      return {
+        bg: "#EEF2FF",
+        color: "#4F46E5",
+      };
+    }
+
+    if (targetType === "batch") {
+      return {
+        bg: "#DCFCE7",
+        color: "#10B981",
+      };
+    }
+
+    if (targetType === "category") {
+      return {
+        bg: "#FEF3C7",
+        color: "#D97706",
+      };
+    }
+
+    return {
+      bg: "#DBEAFE",
+      color: "#2563EB",
+    };
+  }
+
+  const audienceStyle = getAudienceColor();
+
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       style={{
         backgroundColor: "#FFF",
-        borderRadius: 24,
-        padding: 18,
-        marginBottom: 16,
+        borderRadius: 22,
+        padding: 14,
+        marginBottom: 12,
         shadowColor: "#000",
         shadowOpacity: 0.03,
         shadowRadius: 6,
         elevation: 2,
       }}>
-      {/* TOP */}
       <View
         style={{
           flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
         }}>
+        {/* ICON */}
         <View
           style={{
-            flexDirection: "row",
+            width: 44,
+            height: 44,
+            borderRadius: 16,
+            backgroundColor: "#EEE8FF",
+            justifyContent: "center",
             alignItems: "center",
-            flex: 1,
+            marginRight: 12,
           }}>
+          <Bell size={20} color="#6C63FF" />
+        </View>
+
+        {/* CONTENT */}
+        <View style={{ flex: 1 }}>
+          {/* TOP */}
           <View
             style={{
-              width: 48,
-              height: 48,
-              borderRadius: 16,
-              backgroundColor: "#EEE8FF",
-              justifyContent: "center",
+              flexDirection: "row",
+              justifyContent: "space-between",
               alignItems: "center",
-              marginRight: 14,
             }}>
-            <Bell size={22} color="#6C63FF" />
-          </View>
-
-          <View style={{ flex: 1 }}>
             <Text
+              numberOfLines={1}
               style={{
-                fontSize: 16,
+                flex: 1,
+                fontSize: 15,
                 fontWeight: "800",
                 color: "#111827",
+                paddingRight: 10,
               }}>
               {title}
             </Text>
 
             <Text
               style={{
-                marginTop: 4,
-                fontSize: 13,
-                color: "#667085",
+                fontSize: 11,
+                color: "#98A2B3",
               }}>
-              {batch}
+              {time}
             </Text>
           </View>
+
+          {/* TARGET */}
+          <View
+            style={{
+              marginTop: 8,
+              alignSelf: "flex-start",
+              backgroundColor: audienceStyle.bg,
+
+              paddingHorizontal: 10,
+
+              paddingVertical: 5,
+
+              borderRadius: 10,
+
+              flexDirection: "row",
+
+              alignItems: "center",
+            }}>
+            {targetType === "batch" ? (
+              <Layers3 size={11} color={audienceStyle.color} />
+            ) : (
+              <Users size={11} color={audienceStyle.color} />
+            )}
+
+            <Text
+              style={{
+                marginLeft: 5,
+                fontSize: 11,
+                fontWeight: "700",
+                color: audienceStyle.color,
+              }}>
+              {getAudienceLabel()}
+            </Text>
+          </View>
+
+          {/* MESSAGE */}
+          <Text
+            numberOfLines={2}
+            style={{
+              marginTop: 10,
+              fontSize: 13,
+              lineHeight: 20,
+              color: "#667085",
+            }}>
+            {message}
+          </Text>
         </View>
-
-        <Text
-          style={{
-            fontSize: 12,
-            color: "#98A2B3",
-          }}>
-          {time}
-        </Text>
       </View>
-
-      {/* MESSAGE */}
-      <Text
-        style={{
-          marginTop: 16,
-          fontSize: 14,
-          lineHeight: 22,
-          color: "#667085",
-        }}>
-        {message}
-      </Text>
     </TouchableOpacity>
   );
 }
@@ -282,14 +396,14 @@ function StatCard({
       style={{
         flex: 1,
         backgroundColor: bg,
-        borderRadius: 18,
-        paddingVertical: 12,
+        borderRadius: 20,
+        paddingVertical: 14,
         alignItems: "center",
       }}>
       <Text
         style={{
           fontSize: 12,
-          fontWeight: "600",
+          fontWeight: "700",
           color,
         }}>
         {title}
@@ -298,7 +412,7 @@ function StatCard({
       <Text
         style={{
           marginTop: 6,
-          fontSize: 18,
+          fontSize: 19,
           fontWeight: "800",
           color: "#111827",
         }}>
@@ -306,4 +420,28 @@ function StatCard({
       </Text>
     </View>
   );
+}
+
+function formatTimeAgo(dateString: string) {
+  const now = new Date();
+
+  const date = new Date(dateString);
+
+  const diff = now.getTime() - date.getTime();
+
+  const minutes = Math.floor(diff / 60000);
+
+  const hours = Math.floor(minutes / 60);
+
+  const days = Math.floor(hours / 24);
+
+  if (minutes < 60) {
+    return `${minutes}m ago`;
+  }
+
+  if (hours < 24) {
+    return `${hours}h ago`;
+  }
+
+  return `${days}d ago`;
 }

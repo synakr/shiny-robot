@@ -4,8 +4,11 @@ export async function createBatch({
   teacherId,
   batchId,
   batchName,
+  batchCategory,
+  batchNumber,
   className,
   year,
+  admissionOpen,
 }: {
   teacherId: string;
 
@@ -13,9 +16,15 @@ export async function createBatch({
 
   batchName: string;
 
+  batchCategory: string;
+
+  batchNumber: string;
+
   className: string;
 
   year: string;
+
+  admissionOpen: boolean;
 }) {
   const response = await supabase.from("batches").insert({
     teacher_id: teacherId,
@@ -24,9 +33,15 @@ export async function createBatch({
 
     batch_name: batchName,
 
+    batch_category: batchCategory,
+
+    batch_number: batchNumber,
+
     class_name: className,
 
     year,
+
+    admission_open: admissionOpen,
   });
 
   return {
