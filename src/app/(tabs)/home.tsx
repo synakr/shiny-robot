@@ -10,10 +10,15 @@ import {
   FileText,
   Notebook,
   PlayCircle,
-  Wallet
+  Wallet,
 } from "lucide-react-native";
 
 import FeatureCard from "@/components/FeatureCard";
+import { greeting, greetingStarters, softBgColors } from "@/services/greeting";
+import { getAnnouncementsForStudent } from "@/services/student-announcements";
+import { useAuthStore } from "@/store/authStore";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
 
 const features = [
   {
@@ -55,12 +60,63 @@ const features = [
 ];
 
 export default function HomeScreen() {
+  const { student } = useAuthStore();
+
+  // jee, neet, foundation based greeting
+  const arr =
+    student?.batch_category === "JEE"
+      ? greeting.jee
+      : student?.batch_category === "NEET"
+        ? greeting.neet
+        : greeting.foundation;
+
+  const greetingText = arr[Math.floor(Math.random() * arr.length)];
+
+  const [announcement, setAnnouncement] = useState<any>(null);
+  useEffect(() => {
+    async function loadAnnouncement() {
+      if (!student) return;
+
+      const response = await getAnnouncementsForStudent(student);
+
+      if (response.success && response.data?.length) {
+        setAnnouncement(response.data[0]);
+      }
+    }
+
+    loadAnnouncement();
+  }, [student]);
+
+  const [quote, setQuote] = useState("");
+
+  useEffect(() => {
+    async function loadQuote() {
+      try {
+        const response = await fetch(
+          "https://prem-k-r.github.io/multilingual-quotes-api/data/en.json",
+        );
+
+        const data = await response.json();
+
+        const randomQuote = data[Math.floor(Math.random() * data.length)];
+
+        setQuote(`${randomQuote.quote} — ${randomQuote.author}`);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    loadQuote();
+  }, []);
+
+  const bgColor = softBgColors[Math.floor(Math.random() * softBgColors.length)];
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F7F7F7" }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: 120,
+          paddingBottom: 200,
         }}>
         {/* HERO */}
         <View
@@ -85,7 +141,12 @@ export default function HomeScreen() {
                   fontWeight: "800",
                   color: "#111827",
                 }}>
-                Hey Sayan! 👋
+                {
+                  greetingStarters[
+                    Math.floor(Math.random() * greetingStarters.length)
+                  ]
+                }{" "}
+                {student?.student_name}, 👋
               </Text>
 
               <Text
@@ -95,105 +156,171 @@ export default function HomeScreen() {
                   lineHeight: 24,
                   color: "#374151",
                 }}>
-                Stay consistent today,{"\n"}
-                Success is built daily.
+                {"\t" + greetingText}
               </Text>
+
+              {/* <Text
+                style={{
+                  marginTop: 18,
+                  fontSize: 13,
+                  lineHeight: 22,
+                  color: "#374151",
+                  fontStyle: "italic",
+                }}>
+                {quote || "Kosish karne walo ki kabhi haar nahi hoti!"}
+              </Text> */}
             </View>
 
             <TouchableOpacity
+              activeOpacity={0.8}
               style={{
-                marginTop: 4,
+                marginTop: 0,
+                width: 42,
+                height: 42,
+                borderRadius: 999,
+                backgroundColor: "#D7EDF5",
+                justifyContent: "center",
+                alignItems: "center",
               }}>
-              <Bell size={24} color="#111827" />
+              <Bell size={22} color="#111827" />
             </TouchableOpacity>
           </View>
 
-          {/* Illustration */}
+          {/* Illustration + Quote */}
           <View
             style={{
-              marginTop: 28,
+              marginTop: 26,
               height: 120,
-              borderRadius: 22,
-              backgroundColor: "#D7EDF5",
-            }}
-          />
+              borderRadius: 24,
+              backgroundColor: bgColor,
+              overflow: "hidden",
+              paddingHorizontal: 18,
+              paddingVertical: 16,
+              justifyContent: "space-between",
+            }}>
+            <Text
+              style={{
+                fontSize: 13,
+                fontWeight: "700",
+                letterSpacing: 0.3,
+                color: "#0F172A",
+                textTransform: "uppercase",
+              }}>
+              ⭐ Quote of the Day
+            </Text>
+
+            <Text
+              numberOfLines={3}
+              ellipsizeMode="tail"
+              style={{
+                fontSize: 14,
+                lineHeight: 22,
+                color: "#374151",
+                fontStyle: "italic",
+              }}>
+              {quote || "Kosish karne walo ki kabhi haar nahi hoti!"}
+            </Text>
+          </View>
         </View>
 
         {/* ANNOUNCEMENT */}
         <View
           style={{
             marginHorizontal: 16,
-            marginTop: -34,
+            marginTop: -28,
             backgroundColor: "#FFF",
             borderRadius: 22,
             padding: 16,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
             shadowColor: "#000",
-            shadowOpacity: 0.04,
+            shadowOpacity: 0.03,
             shadowRadius: 8,
-            elevation: 3,
+            elevation: 2,
           }}>
+          {/* TOP */}
           <View
             style={{
               flexDirection: "row",
-              flex: 1,
-              alignItems: "center",
+              alignItems: "flex-start",
             }}>
+            {/* ICON */}
             <View
               style={{
-                width: 52,
-                height: 52,
-                borderRadius: 16,
+                width: 46,
+                height: 46,
+                borderRadius: 15,
                 backgroundColor: "#EEE8FF",
                 justifyContent: "center",
                 alignItems: "center",
-                marginRight: 14,
+                marginRight: 12,
               }}>
-              <Notebook size={24} color="#6C63FF" />
+              <Notebook size={22} color="#6C63FF" />
             </View>
 
-            <View style={{ flex: 1 }}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "700",
-                  color: "#111827",
-                }}>
-                New Announcement
-              </Text>
-
-              <Text
-                style={{
-                  marginTop: 4,
-                  fontSize: 13,
-                  color: "#4B5563",
-                }}>
-                Weekly test on Sunday.
-              </Text>
-
-              <Text
-                style={{
-                  marginTop: 2,
-                  fontSize: 13,
-                  color: "#4B5563",
-                }}>
-                Syllabus: Chapter 1–4
-              </Text>
-            </View>
-          </View>
-
-          <TouchableOpacity>
-            <Text
+            {/* CONTENT */}
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={() => router.push("/announcement-details")}
               style={{
-                color: "#6C63FF",
-                fontSize: 14,
-                fontWeight: "600",
+                flex: 1,
               }}>
-              View All
-            </Text>
-          </TouchableOpacity>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                }}>
+                <View
+                  style={{
+                    flex: 1,
+                    paddingRight: 10,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontWeight: "800",
+                      color: "#111827",
+                    }}>
+                    {announcement ? announcement.title : "No Announcements"}
+                  </Text>
+
+                  {announcement && (
+                    <Text
+                      style={{
+                        marginTop: 3,
+                        fontSize: 12,
+                        color: "#98A2B3",
+                        fontWeight: "600",
+                      }}>
+                      {formatAnnouncementDate(announcement.created_at)}
+                    </Text>
+                  )}
+                </View>
+
+                <Text
+                  style={{
+                    color: "#6C63FF",
+                    fontSize: 13,
+                    fontWeight: "700",
+                  }}>
+                  View
+                </Text>
+              </View>
+
+              {/* MESSAGE */}
+              <Text
+                numberOfLines={4}
+                style={{
+                  marginTop: 8,
+                  fontSize: 13.5,
+                  lineHeight: 21,
+                  color: "#4B5563",
+                }}>
+                {announcement
+                  ? announcement.message
+                  : "Announcements from your teacher will appear here."}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* GRID */}
@@ -231,7 +358,7 @@ export default function HomeScreen() {
               fontWeight: "700",
               color: "#111827",
             }}>
-            ⭐ Motivational Quote
+            ⭐ Quote of the Day
           </Text>
 
           <Text
@@ -247,4 +374,10 @@ export default function HomeScreen() {
       </ScrollView>
     </SafeAreaView>
   );
+}
+function formatAnnouncementDate(dateString: string) {
+  return new Date(dateString).toLocaleDateString([], {
+    day: "numeric",
+    month: "short",
+  });
 }

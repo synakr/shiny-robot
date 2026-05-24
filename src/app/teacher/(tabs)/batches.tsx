@@ -263,7 +263,7 @@ function BatchCard({
               fontWeight: "800",
               color: "#111827",
             }}>
-            {batchId}
+            {batchName}
           </Text>
 
           <Text
@@ -272,7 +272,7 @@ function BatchCard({
               fontSize: 14,
               color: "#667085",
             }}>
-            {batchName} • {batchCategory}
+            {batchId} • {batchCategory}
           </Text>
         </View>
 

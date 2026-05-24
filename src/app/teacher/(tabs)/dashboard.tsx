@@ -1,32 +1,115 @@
 import { router } from "expo-router";
+
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+
+import { useEffect, useMemo, useState } from "react";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
-  Archive,
+  ArchiveRestore,
   Bell,
+  BellRing,
   CheckSquare,
+  ClipboardCheck,
   CreditCard,
   FileText,
-  ListTodo,
+  GraduationCap,
   Megaphone,
+  NotebookPen,
   UserCheck,
   Users,
-  Wallet
+  Wallet,
 } from "lucide-react-native";
 
 import ActivityItem from "@/components/ActivityItems";
+
 import QuickActionCard from "@/components/QuickActionCard";
+
 import TeacherStatCard from "@/components/TeacherStatCard";
+
 import { useAuthStore } from "@/store/authStore";
+
+import { getStudentsByTeacher } from "@/services/students";
+
+import { getBatchesByTeacher } from "@/services/batches";
 
 export default function TeacherDashboardScreen() {
   const { teacher } = useAuthStore();
 
-  console.log(teacher);
+  const [students, setStudents] = useState<any[]>([]);
+
+  const [batches, setBatches] = useState<any[]>([]);
+
+  useEffect(() => {
+    async function loadDashboard() {
+      if (!teacher?.id) return;
+
+      const studentsResponse = await getStudentsByTeacher(teacher.id);
+
+      if (studentsResponse.success) {
+        setStudents(studentsResponse.data || []);
+      }
+
+      const batchesResponse = await getBatchesByTeacher(teacher.id);
+
+      if (batchesResponse.success) {
+        setBatches(batchesResponse.data || []);
+      }
+    }
+
+    loadDashboard();
+  }, [teacher]);
+
+  const weeklyStudents = useMemo(() => {
+    return students.filter((student) => {
+      const created = new Date(student.created_at);
+
+      const now = new Date();
+
+      const diff = now.getTime() - created.getTime();
+
+      return diff < 7 * 24 * 60 * 60 * 1000;
+    }).length;
+  }, [students]);
+
+  const pendingPayments = useMemo(() => {
+    return students.filter((student) => student.payment_status === "Pending")
+      .length;
+  }, [students]);
+
+  const activeBatches = useMemo(() => {
+    return batches.filter((batch) => batch.is_active).length;
+  }, [batches]);
+
+  const [quote, setQuote] = useState("");
+
+  useEffect(() => {
+    async function loadQuote() {
+      try {
+        const response = await fetch(
+          "https://prem-k-r.github.io/multilingual-quotes-api/data/en.json",
+        );
+
+        const data = await response.json();
+
+        const randomQuote = data[Math.floor(Math.random() * data.length)];
+
+        setQuote(`${randomQuote.quote} — ${randomQuote.author}`);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    loadQuote();
+  }, []);
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: "#F8F8F8",
+      }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
@@ -35,7 +118,7 @@ export default function TeacherDashboardScreen() {
         {/* HERO */}
         <View
           style={{
-            backgroundColor: "#E9D8FD",
+            backgroundColor: "#EEF2FF",
             paddingHorizontal: 20,
             paddingTop: 16,
             paddingBottom: 90,
@@ -59,24 +142,35 @@ export default function TeacherDashboardScreen() {
           {/* HERO TEXT */}
           <View
             style={{
-              marginTop: 28,
+              marginTop: 25,
             }}>
             <Text
               style={{
-                fontSize: 26,
+                fontSize: 28,
                 fontWeight: "800",
                 color: "#111827",
               }}>
-              Welcome, {teacher?.teacher_name || "Teacher"}! 👋
+              {teacher?.institute_name || "Institute"}
             </Text>
 
             <Text
               style={{
                 marginTop: 6,
-                fontSize: 14,
-                color: "#4B5563",
+                fontSize: 15,
+                color: "#6B7280",
               }}>
-              {teacher?.institute_name || "Manage your classes easily."}
+              Welcome back, {teacher?.teacher_name || "Teacher"} Sir
+            </Text>
+
+            <Text
+              style={{
+                marginTop: 18,
+                fontSize: 13,
+                lineHeight: 22,
+                color: "#374151",
+                fontStyle: "italic",
+              }}>
+              {quote || "Kosish karne walo ki kabhi haar nahi hoti!"}
             </Text>
           </View>
         </View>
@@ -87,32 +181,36 @@ export default function TeacherDashboardScreen() {
             flexDirection: "row",
             paddingHorizontal: 14,
             marginTop: -56,
+            gap: 12,
           }}>
+          {/* STUDENTS */}
           <TeacherStatCard
             icon={Users}
             title="Students"
-            value="248"
-            subtitle="+12 this week"
-            color="#10B981"
-            bg="#EEE8FF"
+            value={`${students.length}`}
+            subtitle={`+${weeklyStudents} this week`}
+            color="#4F46E5"
+            bg="#EEF2FF"
           />
 
+          {/* PAYMENTS */}
           <TeacherStatCard
             icon={Wallet}
             title="Pending"
-            value="18"
-            subtitle="₹ 45,000"
-            color="#F59E0B"
-            bg="#FEF3C7"
+            value={`${pendingPayments}`}
+            subtitle={`₹ ${pendingPayments * 2500}`}
+            color="#D97706"
+            bg="#FFF7ED"
           />
 
+          {/* BATCHES */}
           <TeacherStatCard
             icon={UserCheck}
             title="Batches"
-            value="6"
-            subtitle="Running"
-            color="#10B981"
-            bg="#DCFCE7"
+            value={`${activeBatches}`}
+            subtitle="Active"
+            color="#059669"
+            bg="#ECFDF5"
           />
         </View>
 
@@ -128,31 +226,22 @@ export default function TeacherDashboardScreen() {
             justifyContent: "space-between",
             gap: 10,
           }}>
-          {/* <QuickActionCard
-            icon={Users}
-            title="View Students"
-            color="#6C63FF"
-            bg="#EEE8FF"
-            onPress={() => router.push("/teacher/students")}
-          /> */}
-
           <QuickActionCard
-            icon={Megaphone}
-            title="Send Announcement"
-            color="#F59E0B"
-            bg="#FEF3C7"
-            onPress={() => router.push("/teacher/create-announcement")}
-          />
-
-          <QuickActionCard
-            icon={FileText}
+            icon={NotebookPen}
             title="Share Notes"
-            color="#10B981"
-            bg="#DCFCE7"
+            color="#059669"
+            bg="#D1FAE5"
           />
 
           <QuickActionCard
-            icon={CheckSquare}
+            icon={Wallet}
+            title="Payment Update"
+            color="#E11D48"
+            bg="#FFE4E6"
+          />
+
+          <QuickActionCard
+            icon={ClipboardCheck}
             title="Create Task / DPP"
             color="#2563EB"
             bg="#DBEAFE"
@@ -160,33 +249,43 @@ export default function TeacherDashboardScreen() {
           />
 
           <QuickActionCard
-            icon={CreditCard}
-            title="Payment Update"
-            color="#EF4444"
-            bg="#FFE4E6"
-          />
-
-          {/* <QuickActionCard
-            icon={Rocket}
-            title="Launch Course"
-            color="#8B5CF6"
-            bg="#F3E8FF"
-          /> */}
-
-          <QuickActionCard
-            icon={Archive}
+            icon={ArchiveRestore}
             title="Saved Tasks"
-            color="#F59E0B"
-            bg="#FEF3C7"
+            color="#7C3AED"
+            bg="#F3E8FF"
             onPress={() => router.push("/teacher/tasks")}
           />
 
           <QuickActionCard
-            icon={ListTodo}
-            title="Announcements"
-            color="#10B981"
-            bg="#DCFCE7"
+            icon={Megaphone}
+            title="Send Announcement"
+            color="#D97706"
+            bg="#FEF3C7"
+            onPress={() => router.push("/teacher/create-announcement")}
+          />
+
+          <QuickActionCard
+            icon={BellRing}
+            title="Announcement"
+            color="#0891B2"
+            bg="#E0F2FE"
             onPress={() => router.push("/teacher/announcements")}
+          />
+
+          <QuickActionCard
+            icon={GraduationCap}
+            title="Admissions"
+            color="#4F46E5"
+            bg="#E0E7FF"
+            onPress={() => router.push("/teacher/admissions")}
+          />
+
+          <QuickActionCard
+            icon={GraduationCap}
+            title="Test"
+            color="#4F46E6"
+            bg="#E0E7FF"
+            onPress={() => router.push("/teacher/tests")}
           />
         </View>
 

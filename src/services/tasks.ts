@@ -20,10 +20,27 @@ export async function getTasksByTeacher(teacherId: string) {
 
 export async function createTask({
   teacherId,
+
   title,
+
   description,
+
+  targetType,
+
   className,
+
+  batchId,
+
   batchName,
+
+  batchCategory,
+
+  year,
+
+  totalMarks,
+
+  attachmentUrl,
+
   dueDate,
 }: {
   teacherId: string;
@@ -32,11 +49,23 @@ export async function createTask({
 
   description: string;
 
-  className: string;
+  targetType: string;
 
-  batchName: string;
+  className?: string;
 
-  dueDate: string;
+  batchId?: string;
+
+  batchName?: string;
+
+  batchCategory?: string;
+
+  year?: string;
+
+  totalMarks?: number;
+
+  attachmentUrl?: string;
+
+  dueDate?: string;
 }) {
   const response = await supabase.from("tasks").insert({
     teacher_id: teacherId,
@@ -45,9 +74,21 @@ export async function createTask({
 
     description,
 
-    class_name: className,
+    target_type: targetType,
 
-    batch_name: batchName,
+    class_name: className || null,
+
+    batch_id: batchId || null,
+
+    batch_name: batchName || null,
+
+    batch_category: batchCategory || null,
+
+    year: year || null,
+
+    total_marks: totalMarks || null,
+
+    attachment_url: attachmentUrl || null,
 
     due_date: dueDate || null,
   });

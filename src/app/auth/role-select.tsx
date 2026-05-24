@@ -79,7 +79,7 @@ export default function RoleSelectScreen() {
         />
 
         <RoleButton
-          onPress={() => router.push("/auth/admission")}
+          onPress={() => router.push("/auth/institute-fill")}
           icon={UserPlus}
           title="Apply for Admission"
           subtitle="Join a batch and start learning"

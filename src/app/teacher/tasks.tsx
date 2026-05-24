@@ -1,10 +1,16 @@
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { ArrowLeft, ClipboardList, Plus } from "lucide-react-native";
+import {
+  ArrowLeft,
+  ClipboardList,
+  Layers3,
+  Plus,
+  Users,
+} from "lucide-react-native";
 
 import { router } from "expo-router";
 
@@ -30,6 +36,14 @@ export default function TasksScreen() {
 
     loadTasks();
   }, [teacher]);
+
+  const activeTasks = useMemo(() => {
+    return tasks.filter((task) => task.status !== "completed").length;
+  }, [tasks]);
+
+  const completedTasks = useMemo(() => {
+    return tasks.filter((task) => task.status === "completed").length;
+  }, [tasks]);
 
   return (
     <SafeAreaView
@@ -94,12 +108,17 @@ export default function TasksScreen() {
 
             <StatCard
               title="Completed"
-              value="12"
+              value={`${completedTasks}`}
               bg="#DCFCE7"
               color="#10B981"
             />
 
-            <StatCard title="Pending" value="4" bg="#FEF3C7" color="#F59E0B" />
+            <StatCard
+              title="Active"
+              value={`${activeTasks}`}
+              bg="#FEF3C7"
+              color="#F59E0B"
+            />
           </View>
 
           {/* TASK LIST */}
@@ -144,10 +163,13 @@ export default function TasksScreen() {
                   key={index}
                   title={task.title}
                   description={task.description}
-                  batch={`${task.class_name} • ${task.batch_name}`}
-                  deadline={task.due_date || "No Deadline"}
-                  submissions="18/24"
-                  completed={index % 2 === 0}
+                  targetType={task.target_type}
+                  batchName={task.batch_name}
+                  batchCategory={task.batch_category}
+                  className={task.class_name}
+                  dueDate={task.due_date}
+                  totalMarks={task.total_marks}
+                  status={task.status}
                   onPress={() =>
                     router.push({
                       pathname: "/teacher/create-task",
@@ -198,140 +220,224 @@ export default function TasksScreen() {
 function TaskCard({
   title,
   description,
-  batch,
-  deadline,
-  submissions,
-  completed,
+  targetType,
+  batchName,
+  batchCategory,
+  className,
+  dueDate,
+  totalMarks,
+  status,
   onPress,
 }: {
   title: string;
 
-  description: string;
+  description?: string;
 
-  batch: string;
+  targetType: string;
 
-  deadline: string;
+  batchName?: string;
 
-  submissions: string;
+  batchCategory?: string;
 
-  completed: boolean;
+  className?: string;
+
+  dueDate?: string;
+
+  totalMarks?: number;
+
+  status?: string;
 
   onPress?: () => void;
 }) {
+  function getTargetLabel() {
+    if (targetType === "all") {
+      return "All Students";
+    }
+
+    if (targetType === "batch") {
+      return batchName;
+    }
+
+    if (targetType === "category") {
+      return batchCategory;
+    }
+
+    if (targetType === "class") {
+      return `Class ${className}`;
+    }
+
+    return "Students";
+  }
+
+  const completed = status === "completed";
+
   return (
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={onPress}
       style={{
         backgroundColor: "#FFF",
-        borderRadius: 24,
-        padding: 18,
-        marginBottom: 16,
+        borderRadius: 22,
+        padding: 14,
+        marginBottom: 12,
         shadowColor: "#000",
         shadowOpacity: 0.03,
         shadowRadius: 6,
         elevation: 2,
       }}>
-      {/* TOP */}
       <View
         style={{
           flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
         }}>
-        <View style={{ flex: 1 }}>
-          <Text
-            style={{
-              fontSize: 17,
-              fontWeight: "800",
-              color: "#111827",
-            }}>
-            {title}
-          </Text>
-
-          <Text
-            style={{
-              marginTop: 6,
-              fontSize: 13,
-              color: "#667085",
-            }}>
-            {batch}
-          </Text>
-        </View>
-
+        {/* ICON */}
         <View
           style={{
-            backgroundColor: completed ? "#DCFCE7" : "#FEF3C7",
-
-            paddingHorizontal: 12,
-
-            paddingVertical: 6,
-
-            borderRadius: 12,
+            width: 44,
+            height: 44,
+            borderRadius: 16,
+            backgroundColor: "#EEE8FF",
+            justifyContent: "center",
+            alignItems: "center",
+            marginRight: 12,
           }}>
-          <Text
-            style={{
-              fontSize: 12,
-              fontWeight: "700",
-              color: completed ? "#10B981" : "#D97706",
-            }}>
-            {completed ? "Completed" : "Pending"}
-          </Text>
+          <ClipboardList size={20} color="#6C63FF" />
         </View>
-      </View>
 
-      {/* DESCRIPTION */}
-      <Text
-        style={{
-          marginTop: 14,
-          fontSize: 14,
-          lineHeight: 22,
-          color: "#667085",
-        }}>
-        {description}
-      </Text>
+        {/* CONTENT */}
+        <View style={{ flex: 1 }}>
+          {/* TOP */}
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}>
+            <Text
+              numberOfLines={1}
+              style={{
+                flex: 1,
+                fontSize: 15,
+                fontWeight: "800",
+                color: "#111827",
+                paddingRight: 10,
+              }}>
+              {title}
+            </Text>
 
-      {/* STATS */}
-      <View
-        style={{
-          flexDirection: "row",
-          marginTop: 18,
-        }}>
-        <InfoBox title="Deadline" value={deadline} />
+            <View
+              style={{
+                backgroundColor: completed ? "#DCFCE7" : "#FEF3C7",
 
-        <InfoBox title="Submissions" value={submissions} />
+                paddingHorizontal: 10,
 
-        <InfoBox title="Progress" value="75%" />
+                paddingVertical: 5,
+
+                borderRadius: 10,
+              }}>
+              <Text
+                style={{
+                  fontSize: 11,
+                  fontWeight: "700",
+                  color: completed ? "#10B981" : "#D97706",
+                }}>
+                {completed ? "Completed" : "Active"}
+              </Text>
+            </View>
+          </View>
+
+          {/* TARGET */}
+          <View
+            style={{
+              marginTop: 8,
+              alignSelf: "flex-start",
+              backgroundColor: "#F3F4F6",
+
+              paddingHorizontal: 10,
+
+              paddingVertical: 5,
+
+              borderRadius: 10,
+
+              flexDirection: "row",
+
+              alignItems: "center",
+            }}>
+            {targetType === "batch" ? (
+              <Layers3 size={11} color="#4B5563" />
+            ) : (
+              <Users size={11} color="#4B5563" />
+            )}
+
+            <Text
+              style={{
+                marginLeft: 5,
+                fontSize: 11,
+                fontWeight: "700",
+                color: "#4B5563",
+              }}>
+              {getTargetLabel()}
+            </Text>
+          </View>
+
+          {/* DESCRIPTION */}
+          {!!description && (
+            <Text
+              numberOfLines={2}
+              style={{
+                marginTop: 10,
+                fontSize: 13,
+                lineHeight: 20,
+                color: "#667085",
+              }}>
+              {description}
+            </Text>
+          )}
+
+          {/* FOOTER */}
+          <View
+            style={{
+              flexDirection: "row",
+              marginTop: 12,
+              gap: 18,
+            }}>
+            {!!dueDate && (
+              <FooterText label="Due" value={formatDate(dueDate)} />
+            )}
+
+            {!!totalMarks && (
+              <FooterText label="Marks" value={`${totalMarks}`} />
+            )}
+
+            <FooterText label="Progress" value="75%" />
+          </View>
+        </View>
       </View>
     </TouchableOpacity>
   );
 }
 
-function InfoBox({
-  title,
+function FooterText({
+  label,
   value,
 }: {
-  title: string;
+  label: string;
 
   value: string;
 }) {
   return (
-    <View
-      style={{
-        flex: 1,
-      }}>
+    <View>
       <Text
         style={{
-          fontSize: 12,
+          fontSize: 11,
           color: "#98A2B3",
         }}>
-        {title}
+        {label}
       </Text>
 
       <Text
         style={{
-          marginTop: 4,
-          fontSize: 15,
+          marginTop: 2,
+          fontSize: 13,
           fontWeight: "700",
           color: "#111827",
         }}>
@@ -384,4 +490,13 @@ function StatCard({
       </Text>
     </View>
   );
+}
+
+function formatDate(dateString: string) {
+  const date = new Date(dateString);
+
+  return date.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+  });
 }
