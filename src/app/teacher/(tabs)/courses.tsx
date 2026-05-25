@@ -195,7 +195,7 @@ export default function CoursesScreen() {
           style={{
             position: "absolute",
             right: 20,
-            bottom: 28,
+            bottom: 90,
             width: 62,
             height: 62,
             borderRadius: 31,

@@ -5,6 +5,7 @@ type Props = {
   subtitle: string;
   icon: any;
   color: string;
+  onPress?: () => void;
 };
 
 export default function FeatureCard({
@@ -12,51 +13,57 @@ export default function FeatureCard({
   subtitle,
   icon: Icon,
   color,
+  onPress,
 }: Props) {
   return (
     <TouchableOpacity
+      activeOpacity={0.6}
+      onPress={onPress}
       style={{
         width: "48%",
         backgroundColor: "#FFF",
-        borderRadius: 22,
-        padding: 14,
-        marginBottom: 14,
-        minHeight: 120,
+        borderRadius: 18,
+        padding: 13,
+        minHeight: 102,
+
         shadowColor: "#000",
-        shadowOpacity: 0.03,
-        shadowRadius: 6,
+        shadowOpacity: 0.025,
+        shadowRadius: 5,
         elevation: 2,
       }}>
       <View
         style={{
-          width: 48,
-          height: 48,
-          borderRadius: 16,
-          backgroundColor: `${color}20`,
+          width: 42,
+          height: 42,
+          borderRadius: 14,
+          backgroundColor: `${color}16`,
           justifyContent: "center",
           alignItems: "center",
         }}>
-        <Icon size={22} color={color} />
+        <Icon size={20} color={color} />
       </View>
 
-      <Text
-        style={{
-          marginTop: 16,
-          fontSize: 16,
-          fontWeight: "700",
-          color: "#111827",
-        }}>
-        {title}
-      </Text>
+      <View style={{ marginTop: 12 }}>
+        <Text
+          numberOfLines={1}
+          style={{
+            fontSize: 14,
+            fontWeight: "700",
+            color: "#111827",
+          }}>
+          {title}
+        </Text>
 
-      <Text
-        style={{
-          marginTop: 6,
-          fontSize: 14,
-          color,
-        }}>
-        {subtitle}
-      </Text>
+        <Text
+          numberOfLines={1}
+          style={{
+            marginTop: 4,
+            fontSize: 12,
+            color: "#6B7280",
+          }}>
+          {subtitle}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 }

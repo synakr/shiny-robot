@@ -161,7 +161,7 @@ export default function TestsScreen() {
                 target={getTargetLabel(test)}
                 onPress={() =>
                   router.push({
-                    pathname: "/test-details",
+                    pathname: "/student/test-details",
 
                     params: {
                       testId: test.id,

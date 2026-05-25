@@ -228,7 +228,7 @@ export default function TasksScreen() {
                   completed={task.status === "completed"}
                   onPress={() =>
                     router.push({
-                      pathname: "/task-details",
+                      pathname: "/student/task-details",
 
                       params: {
                         title: task.title,

@@ -17,6 +17,7 @@ import {
   GraduationCap,
   Megaphone,
   NotebookPen,
+  PenIcon,
   UserCheck,
   Users,
   Wallet,
@@ -281,10 +282,10 @@ export default function TeacherDashboardScreen() {
           />
 
           <QuickActionCard
-            icon={GraduationCap}
+            icon={PenIcon}
             title="Test"
-            color="#4F46E6"
-            bg="#E0E7FF"
+            color="#e65346"
+            bg="#ffdfdf"
             onPress={() => router.push("/teacher/tests")}
           />
         </View>

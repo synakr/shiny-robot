@@ -12,12 +12,12 @@ export default function Index() {
 
   // Teacher
   if (role === "teacher") {
-    return <Redirect href="/teacher/dashboard" />;
+    return <Redirect href="/teacher/(tabs)/dashboard" />;
   }
 
   // Student
   if (role === "student") {
-    return <Redirect href="/auth/role-select" />;
+    return <Redirect href="/student/(tabs)/home" />;
   }
 
   return <Redirect href="/auth/role-select" />;

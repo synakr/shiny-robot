@@ -1,10 +1,10 @@
 import { Tabs } from "expo-router";
 
 import {
-  BookOpen,
   CheckSquare,
   FileText,
   Home,
+  PenIcon,
   User,
 } from "lucide-react-native";
 
@@ -73,13 +73,12 @@ export default function TabsLayout() {
       />
 
       <Tabs.Screen
-        name="courses"
+        name="tests"
         options={{
-          title: "Courses",
-          tabBarIcon: ({ color }) => <BookOpen size={21} color={color} />,
+          title: "Tests",
+          tabBarIcon: ({ color }) => <PenIcon size={21} color={color} />,
         }}
       />
-
       <Tabs.Screen
         name="profile"
         options={{

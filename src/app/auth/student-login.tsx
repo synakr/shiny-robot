@@ -70,7 +70,7 @@ export default function StudentLoginScreen() {
 
       Alert.alert("Success", "Login successful.");
 
-      router.replace("/(tabs)/home");
+      router.replace("/student/(tabs)/home");
     } catch (error) {
       Alert.alert("Error", "Something went wrong.");
     } finally {
@@ -170,7 +170,7 @@ export default function StudentLoginScreen() {
 
       Alert.alert("Success", "Account created successfully.");
 
-      router.replace("/(tabs)/home");
+      router.replace("/student/(tabs)/home");
     } catch (error) {
       Alert.alert("Error", "Something went wrong.");
     } finally {

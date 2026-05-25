@@ -1,9 +1,9 @@
 import {
-    ActivityIndicator,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 import { useEffect, useState } from "react";
@@ -193,7 +193,7 @@ export default function TestDetailsScreen() {
             activeOpacity={0.9}
             onPress={() =>
               router.push({
-                pathname: "/attempt-test",
+                pathname: "/student/attempt-test",
 
                 params: {
                   testId: test.id,
