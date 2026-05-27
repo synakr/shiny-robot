@@ -3,7 +3,6 @@ import { supabase } from "@/lib/supabase";
 export async function assignTest({
   testId,
   teacherId,
-  title,
   targetType,
   batchName,
   batchId,
@@ -14,8 +13,6 @@ export async function assignTest({
   testId: string;
 
   teacherId: string;
-
-  title?: string;
 
   targetType: string;
 
@@ -36,8 +33,6 @@ export async function assignTest({
 
       teacher_id: teacherId,
 
-      title,
-
       target_type: targetType,
 
       batch_name: batchName,
@@ -52,6 +47,31 @@ export async function assignTest({
     })
     .select()
     .single();
+
+  return {
+    success: !response.error,
+
+    data: response.data,
+
+    error: response.error,
+  };
+}
+
+export async function getAssignmentsForStudent({ student }: { student: any }) {
+  const response = await supabase
+    .from("test_assignments")
+    .select(
+      `
+        *,
+        tests (
+          *
+        )
+      `,
+    )
+    .eq("status", "published")
+    .order("created_at", {
+      ascending: false,
+    });
 
   return {
     success: !response.error,

@@ -5,12 +5,6 @@ export async function createTest({
   title,
   description,
   durationMinutes,
-  targetType,
-  batchName,
-  batchId,
-  batchCategory,
-  className,
-  year,
   questions,
 }: {
   teacherId: string;
@@ -20,18 +14,6 @@ export async function createTest({
   description?: string;
 
   durationMinutes?: number;
-
-  targetType: string;
-
-  batchName?: string;
-
-  batchId?: string;
-
-  batchCategory?: string;
-
-  className?: string;
-
-  year?: string;
 
   questions: any[];
 }) {
@@ -50,20 +32,6 @@ export async function createTest({
       total_questions: questions.length,
 
       total_marks: questions.length,
-
-      target_type: targetType,
-
-      batch_name: batchName,
-
-      batch_id: batchId,
-
-      batch_category: batchCategory,
-
-      class_name: className,
-
-      year,
-
-      status: "published",
     })
     .select()
     .single();
@@ -78,14 +46,13 @@ export async function createTest({
 
   const test = testResponse.data;
 
-  // PREPARE QUESTIONS
+  // INSERT QUESTIONS
   const formattedQuestions = questions.map((question) => ({
     ...question,
 
     test_id: test.id,
   }));
 
-  // INSERT QUESTIONS
   const questionResponse = await supabase
     .from("test_questions")
     .insert(formattedQuestions);
@@ -104,6 +71,7 @@ export async function createTest({
     data: test,
   };
 }
+
 export async function getTestsByTeacher(teacherId: string) {
   const response = await supabase
     .from("tests")

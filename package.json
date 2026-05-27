@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.1.10",
+    "ts-prune": "^0.10.3",
     "typescript": "~5.9.2"
   },
   "private": true
