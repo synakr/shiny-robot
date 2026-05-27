@@ -29,3 +29,22 @@ export async function getTestsForStudent(student: any) {
     error: response.error,
   };
 }
+export async function hasStudentAttemptedTest({
+  testId,
+  studentId,
+}: {
+  testId: string;
+
+  studentId: string;
+}) {
+  const response = await supabase
+    .from("student_tests")
+    .select("id")
+    .eq("test_id", testId)
+    .eq("student_id", studentId)
+    .single();
+
+  return {
+    attempted: !!response.data,
+  };
+}

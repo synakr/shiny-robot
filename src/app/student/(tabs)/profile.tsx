@@ -19,8 +19,10 @@ import {
 
 import ProfileMenuItem from "@/components/ProfileMenuItem";
 import StatCard from "@/components/StatCard";
+import { useAuthStore } from "@/store/authStore";
 
 export default function ProfileScreen() {
+  const { student } = useAuthStore();
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F8F8" }}>
       <ScrollView
@@ -99,7 +101,7 @@ export default function ProfileScreen() {
                   fontWeight: "800",
                   color: "#111827",
                 }}>
-                Sayan
+                {student?.student_name}
               </Text>
 
               <Text
@@ -108,7 +110,7 @@ export default function ProfileScreen() {
                   fontSize: 14,
                   color: "#667085",
                 }}>
-                sayan@email.com
+                {student?.email}
               </Text>
 
               <View

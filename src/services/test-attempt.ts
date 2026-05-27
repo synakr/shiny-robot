@@ -67,11 +67,14 @@ export function shuffleQuestions(questions: any[]) {
 }
 export async function submitTest({
   testId,
+  assignmentId,
   studentId,
   answers,
   questions,
 }: {
   testId: string;
+
+  assignmentId?: string;
 
   studentId: string;
 
@@ -105,6 +108,8 @@ export async function submitTest({
     .from("student_tests")
     .insert({
       test_id: testId,
+
+      assignment_id: assignmentId || null,
 
       student_id: studentId,
 

@@ -163,16 +163,38 @@ export default function TeacherDashboardScreen() {
               Welcome back, {teacher?.teacher_name || "Teacher"} Sir
             </Text>
 
-            <Text
+            <View
               style={{
-                marginTop: 18,
-                fontSize: 13,
-                lineHeight: 22,
-                color: "#374151",
-                fontStyle: "italic",
+                marginTop: 20,
+                borderRadius: 18,
+                backgroundColor: "#FFFFFF",
+                paddingHorizontal: 14,
+                paddingVertical: 14,
+
+                borderLeftWidth: 3,
+                borderLeftColor: "#4F46E5",
               }}>
-              {quote || "Kosish karne walo ki kabhi haar nahi hoti!"}
-            </Text>
+              <Text
+                style={{
+                  fontSize: 11,
+                  fontWeight: "800",
+                  color: "#4F46E5",
+                  letterSpacing: 0.5,
+                }}>
+                QUOTE OF THE DAY
+              </Text>
+
+              <Text
+                style={{
+                  marginTop: 8,
+                  fontSize: 12.5,
+                  lineHeight: 20,
+                  color: "#4B5563",
+                  fontStyle: "italic",
+                }}>
+                {quote || "Discipline today, success tomorrow."}
+              </Text>
+            </View>
           </View>
         </View>
 

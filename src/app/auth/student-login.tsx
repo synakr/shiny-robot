@@ -21,6 +21,8 @@ export default function StudentLoginScreen() {
 
   const [loading, setLoading] = useState(false);
 
+  const [isSignup, setIsSignup] = useState(false);
+
   const isEmail = emailOrPhone.includes("@");
 
   async function handleLogin() {
@@ -33,7 +35,6 @@ export default function StudentLoginScreen() {
     try {
       setLoading(true);
 
-      // LOGIN
       const response = await supabase.auth.signInWithPassword({
         email: isEmail ? emailOrPhone : `${emailOrPhone}@student.app`,
 
@@ -46,7 +47,6 @@ export default function StudentLoginScreen() {
         return;
       }
 
-      // FETCH STUDENT
       const studentResponse = await supabase
         .from("students")
         .select("*")
@@ -59,7 +59,6 @@ export default function StudentLoginScreen() {
         return;
       }
 
-      // SAVE GLOBALLY
       const { setUser, setRole, setStudent } = useAuthStore.getState();
 
       setUser(response.data.user);
@@ -88,7 +87,6 @@ export default function StudentLoginScreen() {
     try {
       setLoading(true);
 
-      // FIRST FIND STUDENT
       const studentResponse = await supabase
         .from("students")
         .select("*")
@@ -101,7 +99,6 @@ export default function StudentLoginScreen() {
         return;
       }
 
-      // CHECK IF ALREADY LINKED
       if (studentResponse.data.auth_id) {
         Alert.alert("Account Exists", "Student account already linked.");
 
@@ -112,7 +109,6 @@ export default function StudentLoginScreen() {
         ? emailOrPhone
         : `${emailOrPhone}@student.app`;
 
-      // CREATE AUTH ACCOUNT
       const authResponse = await supabase.auth.signUp({
         email,
         password,
@@ -132,7 +128,6 @@ export default function StudentLoginScreen() {
         return;
       }
 
-      // LINK ACCOUNT
       const linkResponse = await supabase
         .from("students")
         .update({
@@ -146,7 +141,6 @@ export default function StudentLoginScreen() {
         return;
       }
 
-      // FETCH UPDATED STUDENT
       const updatedStudentResponse = await supabase
         .from("students")
         .select("*")
@@ -159,7 +153,6 @@ export default function StudentLoginScreen() {
         return;
       }
 
-      // SAVE GLOBALLY
       const { setUser, setRole, setStudent } = useAuthStore.getState();
 
       setUser(authUser);
@@ -215,7 +208,7 @@ export default function StudentLoginScreen() {
               fontWeight: "800",
               color: "#111827",
             }}>
-            Student Access
+            {isSignup ? "Create Account" : "Student Login"}
           </Text>
 
           <Text
@@ -225,15 +218,68 @@ export default function StudentLoginScreen() {
               lineHeight: 24,
               color: "#667085",
             }}>
-            Login or create your student account to access classes, tasks and
-            notes.
+            {isSignup
+              ? "Create your student account to access classes, tasks and notes."
+              : "Login to access your classes, tasks, notes and test series. "}
           </Text>
+        </View>
+
+        {/* TOGGLE */}
+        <View
+          style={{
+            flexDirection: "row",
+            backgroundColor: "#EEF2FF",
+            borderRadius: 16,
+            padding: 4,
+            marginTop: 32,
+          }}>
+          <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={() => setIsSignup(false)}
+            style={{
+              flex: 1,
+              height: 46,
+              borderRadius: 12,
+              backgroundColor: !isSignup ? "#FFF" : "transparent",
+              justifyContent: "center",
+              alignItems: "center",
+            }}>
+            <Text
+              style={{
+                color: !isSignup ? "#111827" : "#667085",
+                fontSize: 15,
+                fontWeight: "700",
+              }}>
+              Login
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={() => setIsSignup(true)}
+            style={{
+              flex: 1,
+              height: 46,
+              borderRadius: 12,
+              backgroundColor: isSignup ? "#FFF" : "transparent",
+              justifyContent: "center",
+              alignItems: "center",
+            }}>
+            <Text
+              style={{
+                color: isSignup ? "#111827" : "#667085",
+                fontSize: 15,
+                fontWeight: "700",
+              }}>
+              Create Account
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* FORM */}
         <View
           style={{
-            marginTop: 42,
+            marginTop: 34,
           }}>
           <AuthInput
             placeholder="Email or Mobile Number"
@@ -250,27 +296,28 @@ export default function StudentLoginScreen() {
             onChangeText={setPassword}
           />
 
-          {/* FORGOT */}
-          <TouchableOpacity
-            style={{
-              alignSelf: "flex-end",
-            }}>
-            <Text
+          {!isSignup && (
+            <TouchableOpacity
               style={{
-                color: "#6C63FF",
-                fontSize: 14,
-                fontWeight: "600",
+                alignSelf: "flex-end",
               }}>
-              Forgot Password?
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  color: "#6C63FF",
+                  fontSize: 14,
+                  fontWeight: "600",
+                }}>
+                Forgot Password?
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
 
-        {/* LOGIN BUTTON */}
+        {/* ACTION BUTTON */}
         <TouchableOpacity
           activeOpacity={0.85}
           disabled={loading}
-          onPress={handleLogin}
+          onPress={isSignup ? handleCreateAccount : handleLogin}
           style={{
             height: 58,
             borderRadius: 18,
@@ -285,32 +332,7 @@ export default function StudentLoginScreen() {
               fontSize: 16,
               fontWeight: "700",
             }}>
-            {loading ? "Please wait..." : "Login"}
-          </Text>
-        </TouchableOpacity>
-
-        {/* CREATE ACCOUNT */}
-        <TouchableOpacity
-          activeOpacity={0.85}
-          disabled={loading}
-          onPress={handleCreateAccount}
-          style={{
-            height: 58,
-            borderRadius: 18,
-            backgroundColor: "#FFF",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: 14,
-            borderWidth: 1.2,
-            borderColor: "#DDE1EB",
-          }}>
-          <Text
-            style={{
-              color: "#111827",
-              fontSize: 16,
-              fontWeight: "700",
-            }}>
-            Create Account
+            {loading ? "Please wait..." : isSignup ? "Create Account" : "Login"}
           </Text>
         </TouchableOpacity>
 

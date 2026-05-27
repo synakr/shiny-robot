@@ -9,7 +9,7 @@ import {
   ClipboardList,
   FileText,
   Notebook,
-  PlayCircle,
+  PlaySquareIcon,
   Trophy,
   Wallet,
 } from "lucide-react-native";
@@ -28,6 +28,13 @@ import { useEffect, useMemo, useState } from "react";
 
 const features = [
   {
+    title: "Watch Videos",
+    subtitle: "Continue",
+    icon: PlaySquareIcon,
+    color: "#DC2626",
+    route: "/student/videos" as const,
+  },
+  {
     title: "Courses",
     subtitle: "Continue Learning",
     icon: BookOpen,
@@ -39,8 +46,8 @@ const features = [
     title: "Notes",
     subtitle: "Latest Notes",
     icon: FileText,
-    color: "#059669",
-    route: "/student/home" as const,
+    color: "#969105",
+    route: "/student/app-test" as const,
   },
 
   {
@@ -48,22 +55,14 @@ const features = [
     subtitle: "Pending Tasks",
     icon: ClipboardList,
     color: "#D97706",
-    route: "/student/home" as const,
+    route: "/student/(tabs)/tasks" as const,
   },
 
   {
     title: "Payment",
     subtitle: "Fee Status",
     icon: Wallet,
-    color: "#DC2626",
-    route: "/student/home" as const,
-  },
-
-  {
-    title: "Watch Videos",
-    subtitle: "Continue",
-    icon: PlayCircle,
-    color: "#2563EB",
+    color: "#059669",
     route: "/student/home" as const,
   },
 
@@ -287,7 +286,6 @@ export default function HomeScreen() {
           </View>
         </LinearGradient>
 
-        {/* STATS */}
         {/* STATS */}
         <View
           style={{

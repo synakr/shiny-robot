@@ -164,18 +164,7 @@ export default function BatchesScreen() {
               </View>
             ) : (
               batches.map((batch, index) => (
-                <BatchCard
-                  key={index}
-                  batchId={batch.batch_id}
-                  batchName={batch.batch_name}
-                  batchCategory={batch.batch_category}
-                  batchNumber={batch.batch_number}
-                  className={batch.class_name}
-                  year={batch.year}
-                  totalStudents={batch.total_students}
-                  active={batch.is_active}
-                  admissionOpen={batch.admission_open}
-                />
+                <BatchCard key={index} batch={batch} />
               ))
             )}
           </View>
@@ -207,38 +196,37 @@ export default function BatchesScreen() {
   );
 }
 
-function BatchCard({
-  batchId,
-  batchName,
-  batchCategory,
-  batchNumber,
-  className,
-  year,
-  totalStudents,
-  active,
-  admissionOpen,
-}: {
-  batchId: string;
-
-  batchName: string;
-
-  batchCategory: string;
-
-  batchNumber: string;
-
-  className: string;
-
-  year: string;
-
-  totalStudents: number;
-
-  active: boolean;
-
-  admissionOpen: boolean;
-}) {
+function BatchCard({ batch }: { batch: any }) {
   return (
     <TouchableOpacity
       activeOpacity={0.9}
+      onPress={() =>
+        router.push({
+          pathname: "/teacher/batch-details",
+
+          params: {
+            id: batch.id,
+
+            batchId: batch.batch_id,
+
+            batchName: batch.batch_name,
+
+            batchCategory: batch.batch_category,
+
+            batchNumber: batch.batch_number,
+
+            className: batch.class_name,
+
+            year: batch.year,
+
+            totalStudents: batch.total_students,
+
+            active: batch.is_active ? "true" : "false",
+
+            admissionOpen: batch.admission_open ? "true" : "false",
+          },
+        })
+      }
       style={{
         backgroundColor: "#FFF",
         borderRadius: 26,
@@ -263,7 +251,7 @@ function BatchCard({
               fontWeight: "800",
               color: "#111827",
             }}>
-            {batchName}
+            {batch.batch_name}
           </Text>
 
           <Text
@@ -272,13 +260,13 @@ function BatchCard({
               fontSize: 14,
               color: "#667085",
             }}>
-            {batchId} • {batchCategory}
+            {batch.batch_id} • {batch.batch_category}
           </Text>
         </View>
 
         <View
           style={{
-            backgroundColor: active ? "#DCFCE7" : "#F3F4F6",
+            backgroundColor: batch.is_active ? "#DCFCE7" : "#F3F4F6",
 
             paddingHorizontal: 12,
 
@@ -290,9 +278,9 @@ function BatchCard({
             style={{
               fontSize: 12,
               fontWeight: "700",
-              color: active ? "#10B981" : "#667085",
+              color: batch.is_active ? "#10B981" : "#667085",
             }}>
-            {active ? "Active" : "Inactive"}
+            {batch.is_active ? "Active" : "Inactive"}
           </Text>
         </View>
       </View>
@@ -303,11 +291,11 @@ function BatchCard({
           flexDirection: "row",
           marginTop: 20,
         }}>
-        <InfoBox title="Class" value={className} />
+        <InfoBox title="Class" value={batch.class_name} />
 
-        <InfoBox title="Batch" value={batchNumber} />
+        <InfoBox title="Batch" value={batch.batch_number} />
 
-        <InfoBox title="Year" value={year} />
+        <InfoBox title="Year" value={batch.year} />
       </View>
 
       {/* FOOTER */}
@@ -332,13 +320,13 @@ function BatchCard({
               fontWeight: "700",
               color: "#6C63FF",
             }}>
-            {totalStudents} Students
+            {batch.total_students} Students
           </Text>
         </View>
 
         <View
           style={{
-            backgroundColor: admissionOpen ? "#DBEAFE" : "#F3F4F6",
+            backgroundColor: batch.admission_open ? "#DBEAFE" : "#F3F4F6",
 
             paddingHorizontal: 12,
 
@@ -350,9 +338,9 @@ function BatchCard({
             style={{
               fontSize: 12,
               fontWeight: "700",
-              color: admissionOpen ? "#2563EB" : "#667085",
+              color: batch.admission_open ? "#2563EB" : "#667085",
             }}>
-            {admissionOpen ? "Admissions Open" : "Admissions Closed"}
+            {batch.admission_open ? "Admissions Open" : "Admissions Closed"}
           </Text>
         </View>
       </View>
