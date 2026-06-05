@@ -1,56 +1,163 @@
-# Welcome to your Expo app 👋
+# Teacher App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern coaching institute management application built with **React Native (Expo)** and **Supabase**, designed for teachers, students, and educational institutes.
 
-## Get started
+## Features
 
-1. Install dependencies
+### Teacher Portal
 
-   ```bash
-   npm install
-   ```
+- Student Management
+  - Add and manage students
+  - Track attendance
+  - Monitor performance and rankings
+  - Manage payment status
 
-2. Start the app
+- Batch Management
+  - Create and manage batches
+  - Categorize batches (JEE, NEET, Foundation, etc.)
+  - Control admissions per batch
+  - Track batch strength
 
-   ```bash
-   npx expo start
-   ```
+- Admissions
+  - Receive admission requests
+  - Approve or reject applications
+  - Automatic student enrollment after approval
 
-In the output, you'll find options to open the app in a
+- Tasks & DPPs
+  - Create assignments and DPPs
+  - Target specific batches, classes, or categories
+  - Set deadlines and marks
+  - Track completion
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Announcements
+  - Broadcast announcements to:
+    - All students
+    - Specific batches
+    - Specific classes
+    - Batch categories (JEE, NEET, Foundation, etc.)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Notes Sharing
+  - Upload and distribute study materials
+  - Batch-wise note delivery
+  - Cloud storage integration
 
-## Get a fresh project
+---
 
-When you're ready, run:
+### Student Portal
+
+- Student Authentication
+- View announcements
+- Access notes and study materials
+- View assigned tasks and DPPs
+- Track academic progress
+- Receive batch-specific updates
+
+---
+
+## Tech Stack
+
+### Frontend
+
+- React Native
+- Expo
+- Expo Router
+- TypeScript
+- Zustand
+
+### Backend
+
+- Supabase
+  - PostgreSQL
+  - Authentication
+  - Row Level Security (RLS)
+
+### Storage
+
+- Cloudflare R2 (for notes and documents)
+
+---
+
+## Database Modules
+
+- Teachers
+- Students
+- Admissions
+- Batches
+- Tasks
+- Announcements
+- Notes
+
+---
+
+## Project Structure
 
 ```bash
-npm run reset-project
+src/
+├── app/
+│   ├── auth/
+│   ├── teacher/
+│   └── (tabs)/
+├── components/
+├── services/
+├── store/
+├── lib/
+└── utils/
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-### Other setup steps
+## Getting Started
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+### Install Dependencies
 
-## Learn more
+```bash
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### Start Development Server
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npx expo start
+```
 
-## Join the community
+### Run Android
 
-Join our community of developers creating universal apps.
+```bash
+npx expo run:android
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Run iOS
+
+```bash
+npx expo run:ios
+```
+
+---
+
+## Environment Variables
+
+Create a `.env` file:
+
+```env
+EXPO_PUBLIC_SUPABASE_URL=
+EXPO_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+---
+
+## Roadmap
+
+- [ ] Notes Module
+- [ ] Attendance Management
+- [ ] Payment Tracking
+- [ ] Push Notifications
+- [ ] Student Progress Analytics
+- [ ] Parent Portal
+- [ ] WhatsApp Integration
+- [ ] AI-powered Study Assistant
+
+---
+
+## Status
+
+🚧 Currently under active development.
