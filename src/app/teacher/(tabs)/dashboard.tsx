@@ -1,7 +1,12 @@
 import { router } from "expo-router";
 
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-
+import {
+  Alert,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useEffect, useMemo, useState } from "react";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,6 +19,7 @@ import {
   ClipboardCheck,
   CreditCard,
   FileText,
+  LogOut,
   GraduationCap,
   Megaphone,
   NotebookPen,
@@ -35,8 +41,30 @@ import { getStudentsByTeacher } from "@/services/students";
 
 import { getBatchesByTeacher } from "@/services/batches";
 
+import { supabase } from "@/lib/supabase";
+
 export default function TeacherDashboardScreen() {
   const { teacher } = useAuthStore();
+
+  async function handleLogout() {
+    Alert.alert("Logout", "Are you sure you want to logout?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: async () => {
+          await supabase.auth.signOut();
+
+          useAuthStore.getState().logout();
+
+          router.replace("/auth/role-select");
+        },
+      },
+    ]);
+  }
 
   const [students, setStudents] = useState<any[]>([]);
 
@@ -127,18 +155,30 @@ export default function TeacherDashboardScreen() {
             borderBottomRightRadius: 32,
           }}>
           {/* TOP */}
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}>
-            <View />
+<View
+  style={{
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  }}>
+  <TouchableOpacity
+    activeOpacity={0.85}
+    onPress={handleLogout}
+    style={{
+      width: 42,
+      height: 42,
+      borderRadius: 14,
+      backgroundColor: "#FFF",
+      justifyContent: "center",
+      alignItems: "center",
+    }}>
+    <LogOut size={20} color="#DC2626" />
+  </TouchableOpacity>
 
-            <TouchableOpacity>
-              <Bell size={22} color="#111827" />
-            </TouchableOpacity>
-          </View>
+  <TouchableOpacity>
+    <Bell size={22} color="#111827" />
+  </TouchableOpacity>
+</View>
 
           {/* HERO TEXT */}
           <View

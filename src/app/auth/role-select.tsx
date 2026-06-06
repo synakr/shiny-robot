@@ -6,7 +6,28 @@ import { router } from "expo-router";
 
 import { Briefcase, GraduationCap, UserPlus } from "lucide-react-native";
 
+import { useAuthStore } from "@/store/authStore";
+
 export default function RoleSelectScreen() {
+  const { teacher, student } = useAuthStore();
+
+function handleTeacherContinue() {
+  if (teacher) {
+    router.push("/teacher/dashboard");
+    return;
+  }
+
+  router.push("/auth/teacher-login");
+}
+
+function handleStudentContinue() {
+  if (student) {
+    router.replace("/student/home" as any);
+    return;
+  }
+
+  router.push("/auth/student-login");
+}
   return (
     <SafeAreaView
       style={{
@@ -70,7 +91,7 @@ export default function RoleSelectScreen() {
         />
 
         <RoleButton
-          onPress={() => router.push("/auth/teacher-login")}
+          onPress={handleTeacherContinue}
           icon={Briefcase}
           title="Continue as Teacher"
           subtitle="Manage students & batches"
