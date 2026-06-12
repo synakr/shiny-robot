@@ -1,5 +1,24 @@
 import { Redirect } from "expo-router";
 
-export default function IndexScreen() {
+import { useAuthStore } from "@/store/authStore";
+
+export default function Index() {
+  const { user, role } = useAuthStore();
+
+  // Not Logged In
+  if (!user) {
+    return <Redirect href="/auth/role-select" />;
+  }
+
+  // Teacher
+  if (role === "teacher") {
+    return <Redirect href="/teacher/(tabs)/dashboard" />;
+  }
+
+  // Student
+  if (role === "student") {
+    return <Redirect href="/student/(tabs)/home" />;
+  }
+
   return <Redirect href="/auth/role-select" />;
 }

@@ -21,57 +21,7 @@ export default function TeacherLoginScreen() {
 
   const [password, setPassword] = useState("");
 
-  const [loading, setLoading] = useState(false);
-
-  async function handleTeacherLogin() {
-    if (!email || !password) {
-      Alert.alert("Required", "Please fill all fields.");
-
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const response = await teacherLogin(email, password);
-
-      if (!response.success) {
-        Alert.alert("Login Failed", response.error || "Invalid credentials.");
-
-        return;
-      }
-
-      const authUser = response.data?.user;
-
-      if (!authUser) {
-        Alert.alert("Login Failed", "User not found.");
-
-        return;
-      }
-
-      const teacherResponse = await getCurrentTeacher(authUser.id);
-
-      if (!teacherResponse.success || !teacherResponse.data) {
-        Alert.alert("Teacher Profile Missing", "No teacher profile found.");
-
-        return;
-      }
-
-      const { setUser, setRole, setTeacher } = useAuthStore.getState();
-
-      setUser(authUser);
-
-      setRole("teacher");
-
-      setTeacher(teacherResponse.data);
-
-router.push("/teacher/dashboard");
-    } catch (error) {
-      Alert.alert("Error", "Something went wrong.");
-    } finally {
-      setLoading(false);
-    }
-  }
+  const { setUser, setRole, setTeacher } = useAuthStore();
 
   return (
     <SafeAreaView
@@ -163,8 +113,44 @@ router.push("/teacher/dashboard");
         {/* LOGIN BUTTON */}
         <TouchableOpacity
           activeOpacity={0.85}
-          disabled={loading}
-          onPress={handleTeacherLogin}
+          onPress={async () => {
+            const response = await teacherLogin(email, password);
+
+            if (!response.success) {
+              Alert.alert("Login Failed", response.error);
+
+              return;
+            }
+
+            const authUser = response.data?.user;
+
+            if (!authUser) {
+              Alert.alert("Login Failed", "User not found.");
+
+              return;
+            }
+
+            // Fetch Teacher Profile
+            const teacherResponse = await getCurrentTeacher(authUser.id);
+
+            if (!teacherResponse.success) {
+              Alert.alert(
+                "Teacher Profile Missing",
+                "No teacher profile found.",
+              );
+
+              return;
+            }
+
+            // Store Global State
+            setUser(authUser);
+
+            setRole("teacher");
+
+            setTeacher(teacherResponse.data);
+
+            router.replace("/teacher/dashboard");
+          }}
           style={{
             height: 58,
             borderRadius: 18,
@@ -172,7 +158,6 @@ router.push("/teacher/dashboard");
             justifyContent: "center",
             alignItems: "center",
             marginTop: 40,
-            opacity: loading ? 0.7 : 1,
           }}>
           <Text
             style={{
@@ -180,7 +165,7 @@ router.push("/teacher/dashboard");
               fontSize: 16,
               fontWeight: "700",
             }}>
-            {loading ? "Logging in..." : "Login"}
+            Login
           </Text>
         </TouchableOpacity>
       </View>
