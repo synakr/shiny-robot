@@ -290,11 +290,12 @@ export default function TeacherDashboardScreen() {
             gap: 10,
           }}>
           <QuickActionCard
-            icon={NotebookPen}
-            title="Share Notes"
-            color="#059669"
-            bg="#D1FAE5"
-          />
+  icon={NotebookPen}
+  title="Share Notes"
+  color="#059669"
+  bg="#D1FAE5"
+  onPress={() => router.push("/teacher/src/app/teacher/create-note")}
+/>
 
           <QuickActionCard
             icon={Wallet}
