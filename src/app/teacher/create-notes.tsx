@@ -2,6 +2,7 @@ import { useAuthStore } from "@/store/authStore";
 import { decode } from "base64-arraybuffer";
 import * as FileSystem from "expo-file-system/legacy";
 import { useEffect, useState } from "react";
+import { useLocalSearchParams } from "expo-router";
 import { getBatchesByTeacher } from "@/services/batches";
 
 import {
@@ -22,6 +23,8 @@ import { FileText } from "lucide-react-native";
 import { supabase } from "@/lib/supabase";
 
 export default function CreateNoteScreen() {
+
+  const params = useLocalSearchParams();
 
   const [typedNote, setTypedNote] = useState("");
 
@@ -99,19 +102,46 @@ async function uploadPdf() {
         return;
       }
 
-      const noteResponse = await supabase
-        .from("notes")
-        .insert({
-          teacher_id: teacher?.id,
+const noteResponse = await supabase
+  .from("notes")
+  .insert({
+    teacher_id: teacher?.id,
 
-          titile: title,
+    titile: title,
 
-          description,
+    description,
 
-          note_type: "text",
+    note_type: "text",
 
-          note_content: typedNote,
-        });
+    note_content: typedNote,
+
+    target_type: targetType,
+
+    batch_id:
+      targetType === "batch"
+        ? selectedBatch?.batch_id
+        : null,
+
+    batch_name:
+      targetType === "batch"
+        ? selectedBatch?.batch_name
+        : null,
+
+    batch_category:
+      targetType === "batch"
+        ? selectedBatch?.batch_category
+        : null,
+
+    class_name:
+      targetType === "batch"
+        ? selectedBatch?.class_name
+        : null,
+
+    year:
+      targetType === "batch"
+        ? selectedBatch?.year
+        : null,
+  });
 
       if (noteResponse.error) {
         Alert.alert(
@@ -237,12 +267,41 @@ useEffect(() => {
   async function loadBatches() {
     if (!teacher?.id) return;
 
-    const response = await getBatchesByTeacher(
-      teacher.id
-    );
+    const response =
+      await getBatchesByTeacher(
+        teacher.id
+      );
 
     if (response.success) {
-      setBatches(response.data || []);
+      const loadedBatches =
+        response.data || [];
+
+      setBatches(
+        loadedBatches
+      );
+
+      // AUTO SELECT BATCH
+      if (
+        params.batchId &&
+        params.batchName
+      ) {
+        const foundBatch =
+          loadedBatches.find(
+            (batch) =>
+              batch.batch_id ==
+              params.batchId
+          );
+
+        if (foundBatch) {
+          setTargetType(
+            "batch"
+          );
+
+          setSelectedBatch(
+            foundBatch
+          );
+        }
+      }
     }
   }
 

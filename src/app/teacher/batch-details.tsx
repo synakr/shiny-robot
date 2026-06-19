@@ -3,11 +3,12 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
-    ArrowLeft,
-    Bell,
-    ClipboardList,
-    PlayCircle,
-    Users,
+  ArrowLeft,
+  Bell,
+  ClipboardList,
+  PlayCircle,
+  Users,
+  FileText,
 } from "lucide-react-native";
 
 import { router, useLocalSearchParams } from "expo-router";
@@ -153,6 +154,23 @@ export default function BatchDetailsScreen() {
             color="#DC2626"
           />
 
+<QuickCard
+  icon={FileText}
+  title="Notes"
+  subtitle="View and manage shared notes"
+  bg="#E0E7FF"
+  color="#4F46E5"
+  onPress={() =>
+    router.push({
+      pathname: "/teacher/batch-notes",
+      params: {
+        batchId: params.batchId,
+        batchName: params.batchName,
+      },
+    })
+  }
+/>
+
           <QuickCard
             icon={Users}
             title="Students"
@@ -180,6 +198,9 @@ export default function BatchDetailsScreen() {
           />
         </View>
       </ScrollView>
+
+
+      
     </SafeAreaView>
   );
 }

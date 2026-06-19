@@ -294,8 +294,7 @@ export default function TeacherDashboardScreen() {
   title="Share Notes"
   color="#059669"
   bg="#D1FAE5"
-  onPress={() => router.push("/teacher/src/app/teacher/create-note")}
-/>
+onPress={() => router.push("/teacher/create-notes")}/>
 
           <QuickActionCard
             icon={Wallet}
