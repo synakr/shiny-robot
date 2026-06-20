@@ -1,13 +1,7 @@
 import { router } from "expo-router";
 
-import {
-  Alert,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
 import { useEffect, useMemo, useState } from "react";
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -19,8 +13,8 @@ import {
   ClipboardCheck,
   CreditCard,
   FileText,
-  LogOut,
   GraduationCap,
+  LogOut,
   Megaphone,
   NotebookPen,
   PenIcon,
@@ -155,30 +149,30 @@ export default function TeacherDashboardScreen() {
             borderBottomRightRadius: 32,
           }}>
           {/* TOP */}
-<View
-  style={{
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  }}>
-  <TouchableOpacity
-    activeOpacity={0.85}
-    onPress={handleLogout}
-    style={{
-      width: 42,
-      height: 42,
-      borderRadius: 14,
-      backgroundColor: "#FFF",
-      justifyContent: "center",
-      alignItems: "center",
-    }}>
-    <LogOut size={20} color="#DC2626" />
-  </TouchableOpacity>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}>
+            <TouchableOpacity
+              activeOpacity={0.85}
+              onPress={handleLogout}
+              style={{
+                width: 42,
+                height: 42,
+                borderRadius: 14,
+                backgroundColor: "#FFF",
+                justifyContent: "center",
+                alignItems: "center",
+              }}>
+              <LogOut size={20} color="#DC2626" />
+            </TouchableOpacity>
 
-  <TouchableOpacity>
-    <Bell size={22} color="#111827" />
-  </TouchableOpacity>
-</View>
+            <TouchableOpacity>
+              <Bell size={22} color="#111827" />
+            </TouchableOpacity>
+          </View>
 
           {/* HERO TEXT */}
           <View
@@ -290,11 +284,12 @@ export default function TeacherDashboardScreen() {
             gap: 10,
           }}>
           <QuickActionCard
-  icon={NotebookPen}
-  title="Share Notes"
-  color="#059669"
-  bg="#D1FAE5"
-onPress={() => router.push("/teacher/create-notes")}/>
+            icon={NotebookPen}
+            title="Share Notes"
+            color="#059669"
+            bg="#D1FAE5"
+            onPress={() => router.push("/teacher/create-notes")}
+          />
 
           <QuickActionCard
             icon={Wallet}

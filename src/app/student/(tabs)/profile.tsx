@@ -1,5 +1,6 @@
+import { supabase } from "@/lib/supabase";
+import { router } from "expo-router";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -128,7 +129,7 @@ export default function ProfileScreen() {
                     fontWeight: "700",
                     fontSize: 13,
                   }}>
-                  🎓 Class 11
+                  🎓 {student?.class_name} • {student?.batch_name}
                 </Text>
               </View>
             </View>
@@ -151,15 +152,15 @@ export default function ProfileScreen() {
             }}>
             <StatCard
               icon={BookOpen}
-              value="12"
-              label="Courses"
+              value={`${student?.attendance || 0}`}
+              label="Attendance"
               color="#6C63FF"
               bg="#EEE8FF"
             />
 
             <StatCard
               icon={CheckSquare}
-              value="48"
+              value={`${student?.tasks_completed || 0}`}
               label="Tasks"
               color="#F59E0B"
               bg="#FEF3C7"
@@ -167,8 +168,8 @@ export default function ProfileScreen() {
 
             <StatCard
               icon={Trophy}
-              value="85%"
-              label="Progress"
+              value={`${student?.performance_score || 0}`}
+              label="Score"
               color="#10B981"
               bg="#DCFCE7"
             />
@@ -339,6 +340,33 @@ export default function ProfileScreen() {
             bg="#FFE4E6"
           />
         </View>
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={async () => {
+            await supabase.auth.signOut();
+
+            useAuthStore.getState().logout();
+
+            router.replace("/auth/role-select");
+          }}
+          style={{
+            marginHorizontal: 20,
+            marginTop: 28,
+            height: 58,
+            borderRadius: 18,
+            backgroundColor: "#EF4444",
+            justifyContent: "center",
+            alignItems: "center",
+          }}>
+          <Text
+            style={{
+              color: "#FFF",
+              fontSize: 16,
+              fontWeight: "700",
+            }}>
+            Logout
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
