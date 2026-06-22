@@ -182,16 +182,25 @@ export default function BatchDetailsScreen() {
             }}
           />
 
-          <QuickCard
-            icon={ClipboardList}
-            title="Tasks / DPP"
-            subtitle="Assigned tasks and homework"
-            bg="#DBEAFE"
-            color="#2563EB"
-            onPress={() => {
-              AlertNotReady("Tasks / DPP");
-            }}
-          />
+<QuickCard
+  icon={ClipboardList}
+  title="Tasks / DPP"
+  subtitle="Assigned tasks and homework"
+  bg="#DBEAFE"
+  color="#2563EB"
+  onPress={() =>
+    router.push({
+      pathname: "/teacher/create-task",
+      params: {
+        batchId: params.batchId,
+        batchName: params.batchName,
+        batchCategory: params.batchCategory,
+        className: params.className,
+        year: params.year,
+      },
+    })
+  }
+/>
 
           <QuickCard
             icon={PlayCircle}
