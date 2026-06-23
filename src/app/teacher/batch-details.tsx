@@ -171,27 +171,45 @@ export default function BatchDetailsScreen() {
             gap: 14,
           }}
         >
-          <QuickCard
-            icon={Bell}
-            title="Announcements"
-            subtitle="Targeted announcements for this batch"
-            bg="#EEE8FF"
-            color="#6C63FF"
-            onPress={() => {
-              AlertNotReady("Announcements");
-            }}
-          />
+<QuickCard
+  icon={Bell}
+  title="Announcements"
+  subtitle="Targeted announcements for this batch"
+  bg="#EEE8FF"
+  color="#6C63FF"
+  onPress={() =>
+    router.push({
+      pathname: "/teacher/announcements",
+      params: {
+        batchId: params.batchId,
+        batchName: params.batchName,
+        batchCategory: params.batchCategory,
+        className: params.className,
+        year: params.year,
+      },
+    })
+  }
+/>
 
-          <QuickCard
-            icon={ClipboardList}
-            title="Tasks / DPP"
-            subtitle="Assigned tasks and homework"
-            bg="#DBEAFE"
-            color="#2563EB"
-            onPress={() => {
-              AlertNotReady("Tasks / DPP");
-            }}
-          />
+<QuickCard
+  icon={ClipboardList}
+  title="Tasks / DPP"
+  subtitle="Assigned tasks and homework"
+  bg="#DBEAFE"
+  color="#2563EB"
+  onPress={() =>
+    router.push({
+      pathname: "/teacher/create-task",
+      params: {
+        batchId: params.batchId,
+        batchName: params.batchName,
+        batchCategory: params.batchCategory,
+        className: params.className,
+        year: params.year,
+      },
+    })
+  }
+/>
 
           <QuickCard
             icon={PlayCircle}
