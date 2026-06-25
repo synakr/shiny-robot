@@ -59,9 +59,16 @@ export default function StudentLoginScreen() {
         return;
       }
 
-      const { setUser, setRole, setStudent } = useAuthStore.getState();
+      const {
+        setUser,
+        setRole,
+        setStudent,
+        setTeacher,
+      } = useAuthStore.getState();
 
       setUser(response.data.user);
+
+      setTeacher(null);
 
       setRole("student");
 
@@ -153,9 +160,16 @@ export default function StudentLoginScreen() {
         return;
       }
 
-      const { setUser, setRole, setStudent } = useAuthStore.getState();
+      const {
+        setUser,
+        setRole,
+        setStudent,
+        setTeacher,
+      } = useAuthStore.getState();
 
       setUser(authUser);
+
+      setTeacher(null);
 
       setRole("student");
 

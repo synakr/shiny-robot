@@ -50,11 +50,17 @@ export default function TeacherDashboardScreen() {
         text: "Logout",
         style: "destructive",
         onPress: async () => {
-          await supabase.auth.signOut();
+          try {
+            await supabase.auth.signOut();
 
-          useAuthStore.getState().logout();
+            const { logout } = useAuthStore.getState();
 
-          router.replace("/auth/role-select");
+            logout();
+
+            router.replace("/auth/role-select");
+          } catch (error) {
+            Alert.alert("Error", "Failed to logout.");
+          }
         },
       },
     ]);

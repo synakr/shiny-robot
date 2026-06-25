@@ -57,15 +57,22 @@ export default function TeacherLoginScreen() {
         return;
       }
 
-      const { setUser, setRole, setTeacher } = useAuthStore.getState();
+      const {
+        setUser,
+        setRole,
+        setTeacher,
+        setStudent,
+      } = useAuthStore.getState();
 
       setUser(authUser);
+
+      setStudent(null);
 
       setRole("teacher");
 
       setTeacher(teacherResponse.data);
 
-router.push("/teacher/dashboard");
+      router.replace("/teacher/dashboard");
     } catch (error) {
       Alert.alert("Error", "Something went wrong.");
     } finally {
