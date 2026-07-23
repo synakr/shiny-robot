@@ -1,5 +1,16 @@
-import { Download } from "lucide-react-native";
-import { Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useState } from "react";
+
+import {
+  ActivityIndicator,
+  Alert,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import { Download, ExternalLink } from "lucide-react-native";
+
+import { isDownloaded, openNote } from "@/services/offlineNotes";
 
 type Props = {
   title: string;
@@ -7,6 +18,10 @@ type Props = {
   size: string;
   date: string;
   color: string;
+
+  file_name: string | null;
+  file_url: string | null;
+
   badge?: string;
 };
 
@@ -17,9 +32,50 @@ export default function NotesCard({
   date,
   color,
   badge,
+  file_name,
+  file_url,
 }: Props) {
+  const [downloaded, setDownloaded] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+
+  useEffect(() => {
+    async function checkDownloaded() {
+      if (!file_name) return;
+
+      const exists = await isDownloaded(file_name);
+      setDownloaded(exists);
+    }
+
+    checkDownloaded();
+  }, [file_name]);
+
+  async function handlePress() {
+    if (!file_name || !file_url || downloading) return;
+
+    try {
+      setDownloading(true);
+
+      await openNote(file_url, file_name);
+
+      const exists = await isDownloaded(file_name);
+      setDownloaded(exists);
+    } catch (error) {
+      console.error(error);
+
+      Alert.alert(
+        "Unable to open file",
+        "Please check your internet connection or install a compatible application.",
+      );
+    } finally {
+      setDownloading(false);
+    }
+  }
+
   return (
-    <View
+    <TouchableOpacity
+      activeOpacity={0.9}
+      disabled={downloading}
+      onPress={handlePress}
       style={{
         backgroundColor: "#FFF",
         borderRadius: 24,
@@ -91,23 +147,14 @@ export default function NotesCard({
           </Text>
 
           {badge && (
-            <View
+            <Text
               style={{
-                marginLeft: 8,
-                backgroundColor: "#EEE8FF",
-                paddingHorizontal: 8,
-                paddingVertical: 3,
-                borderRadius: 8,
+                color: "#6C63FF",
+                fontSize: 11,
+                fontWeight: "700",
               }}>
-              <Text
-                style={{
-                  color: "#6C63FF",
-                  fontSize: 11,
-                  fontWeight: "700",
-                }}>
-                {badge}
-              </Text>
-            </View>
+              {badge}
+            </Text>
           )}
         </View>
 
@@ -119,15 +166,34 @@ export default function NotesCard({
           }}>
           {date}
         </Text>
+
+        <Text
+          style={{
+            marginTop: 8,
+            fontSize: 12,
+            fontWeight: "600",
+            color: downloaded ? "#16A34A" : "#667085",
+          }}>
+          {downloaded ? "Available offline" : "Tap to download"}
+        </Text>
       </View>
 
-      {/* Download */}
-      <TouchableOpacity
+      <View
         style={{
           marginLeft: 10,
+          width: 38,
+          height: 38,
+          justifyContent: "center",
+          alignItems: "center",
         }}>
-        <Download size={22} color="#667085" />
-      </TouchableOpacity>
-    </View>
+        {downloading ? (
+          <ActivityIndicator size="small" color="#6C63FF" />
+        ) : downloaded ? (
+          <ExternalLink size={22} color="#16A34A" />
+        ) : (
+          <Download size={22} color="#667085" />
+        )}
+      </View>
+    </TouchableOpacity>
   );
 }
