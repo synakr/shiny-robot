@@ -1,4 +1,5 @@
 # Teacher App
+<img width="1536" height="1024" alt="App UI 3" src="https://github.com/user-attachments/assets/0d129d04-3e65-4e5b-b750-6102fc838231" />
 
 A modern coaching institute management application built with **React Native (Expo)** and **Supabase**, designed for teachers, students, and educational institutes.
 
